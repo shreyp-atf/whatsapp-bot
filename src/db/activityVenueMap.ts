@@ -14,6 +14,29 @@ export async function getActivityVenueMapById(id: number): Promise<ActivityVenue
 }
 
 /**
+ * Get activity venue map by id with full details (activity and venue)
+ */
+export async function getActivityVenueMapWithDetailsById(
+  id: number
+): Promise<(ActivityVenueMap & { activity_name: string; activity_description: string; venue_name: string; venue_address: string; venue_google_maps_location: string }) | null> {
+  const result = await query(
+    `SELECT 
+      avm.*,
+      a.name as activity_name,
+      a.description as activity_description,
+      v.name as venue_name,
+      v.address as venue_address,
+      v.google_maps_location as venue_google_maps_location
+    FROM public.activity_venue_map avm
+    INNER JOIN public.activity a ON avm.activity_id = a.activity_id
+    INNER JOIN public.venue v ON avm.venue_id = v.venue_id
+    WHERE avm.id = $1`,
+    [id]
+  );
+  return result.rows[0] || null;
+}
+
+/**
  * Get all activity venue maps
  */
 export async function getAllActivityVenueMaps(): Promise<ActivityVenueMap[]> {

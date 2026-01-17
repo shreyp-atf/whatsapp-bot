@@ -357,6 +357,10 @@ async function main() {
   const MCP_PORT = process.env.MCP_PORT ? parseInt(process.env.MCP_PORT, 10) : 3001;
   const MCP_HOST = process.env.MCP_HOST || '0.0.0.0';
 
+  console.error(`[MCP Server] Starting with configuration:`);
+  console.error(`  Port: ${MCP_PORT}`);
+  console.error(`  Host: ${MCP_HOST}`);
+
   // Create streamable HTTP transport
   const transport = new StreamableHTTPServerTransport({
     sessionIdGenerator: () => randomUUID(),
@@ -412,11 +416,24 @@ async function main() {
   });
 
   // Start the HTTP server
-  app.listen(MCP_PORT, MCP_HOST, () => {
-    console.error(`MCP Server running on HTTP`);
-    console.error(`Server: http://${MCP_HOST}:${MCP_PORT}`);
-    console.error(`MCP endpoint: http://${MCP_HOST}:${MCP_PORT}/mcp`);
-    console.error(`Health check: http://${MCP_HOST}:${MCP_PORT}/health`);
+  const httpServer = app.listen(MCP_PORT, MCP_HOST, () => {
+    const protocol = 'http';
+    const displayHost = MCP_HOST === '0.0.0.0' ? 'localhost' : MCP_HOST;
+    console.error(`\n✓ MCP Server running on HTTP`);
+    console.error(`  Server: ${protocol}://${displayHost}:${MCP_PORT}`);
+    console.error(`  MCP endpoint: ${protocol}://${displayHost}:${MCP_PORT}/mcp`);
+    console.error(`  Health check: ${protocol}://${displayHost}:${MCP_PORT}/health\n`);
+  });
+
+  // Add error handlers
+  httpServer.on('error', (error: NodeJS.ErrnoException) => {
+    if (error.code === 'EADDRINUSE') {
+      console.error(`✗ Port ${MCP_PORT} is already in use`);
+      console.error(`  Try using a different port or stop the process using this port`);
+    } else {
+      console.error('✗ HTTP server error:', error);
+    }
+    process.exit(1);
   });
 }
 
