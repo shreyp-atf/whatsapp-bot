@@ -1,0 +1,253 @@
+Verifying database connection...
+✓ Database connected
+✓ Database connection verified
+Verifying OpenAI connection...
+✓ OpenAI connection verified
+Initializing MCP Server...
+✓ MCP Server initialized
+
+🚀 WhatsApp Bot Server (HTTP)
+Server is running on port 3000
+Health check: http://localhost:3000/health
+Webhook endpoint: http://localhost:3000/webhook
+
+📡 API Endpoints:
+  POST http://localhost:3000/api/users
+  GET  http://localhost:3000/api/users/:userId
+  GET  http://localhost:3000/api/users/:userId/persona
+  GET  http://localhost:3000/api/chats/:chatId/messages?offset=0&limit=2000
+  GET  http://localhost:3000/api/activity-venue-maps/:id
+  POST http://localhost:3000/api/activity-venue-maps
+  POST http://localhost:3000/api/send-event-details
+
+🔧 MCP Endpoints:
+  POST http://localhost:3000/mcp
+  GET  http://localhost:3000/mcp (SSE)
+✓ Webhook signature verification enabled
+
+✓ Server running in HTTP mode
+  Webhook URL for Periskope: http://localhost:3000/webhook
+  MCP endpoint: http://localhost:3000/mcp
+
+Waiting for webhook events and MCP requests...
+
+
+=== Incoming Query ===
+Timestamp: 2026-01-18T15:00:14.753Z
+Method: POST
+Path: /mcp
+Request Body: {
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-03-26",
+    "capabilities": {},
+    "clientInfo": {
+      "name": "mcp",
+      "version": "0.1.0"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": 0
+}
+Headers: {
+  "host": "atfwhatsapp.ngrok.app",
+  "user-agent": "ElevenLabs/1.0",
+  "content-length": "152",
+  "accept": "application/json, text/event-stream",
+  "accept-encoding": "gzip, deflate, br",
+  "content-type": "application/json",
+  "x-forwarded-for": "34.59.11.47",
+  "x-forwarded-host": "atfwhatsapp.ngrok.app",
+  "x-forwarded-proto": "https"
+}
+IP Address: ::ffff:127.0.0.1
+User-Agent: ElevenLabs/1.0
+========================
+
+
+=== MCP POST Request ===
+Timestamp: 2026-01-18T15:00:14.754Z
+Body: {
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-03-26",
+    "capabilities": {},
+    "clientInfo": {
+      "name": "mcp",
+      "version": "0.1.0"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": 0
+}
+Headers: {
+  "host": "atfwhatsapp.ngrok.app",
+  "user-agent": "ElevenLabs/1.0",
+  "content-length": "152",
+  "accept": "application/json, text/event-stream",
+  "accept-encoding": "gzip, deflate, br",
+  "content-type": "application/json",
+  "x-forwarded-for": "34.59.11.47",
+  "x-forwarded-host": "atfwhatsapp.ngrok.app",
+  "x-forwarded-proto": "https"
+}
+IP Address: ::ffff:127.0.0.1
+========================
+
+[MCP Initialize] Intercepting initialize request with protocol version: 2025-03-26
+[MCP Initialize] Returning successful initialization response
+
+=== Incoming Query ===
+Timestamp: 2026-01-18T15:00:14.979Z
+Method: POST
+Path: /mcp
+Request Body: {
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+Headers: {
+  "host": "atfwhatsapp.ngrok.app",
+  "user-agent": "ElevenLabs/1.0",
+  "content-length": "54",
+  "accept": "application/json, text/event-stream",
+  "accept-encoding": "gzip, deflate, br",
+  "content-type": "application/json",
+  "x-forwarded-for": "34.59.11.47",
+  "x-forwarded-host": "atfwhatsapp.ngrok.app",
+  "x-forwarded-proto": "https"
+}
+IP Address: ::ffff:127.0.0.1
+User-Agent: ElevenLabs/1.0
+========================
+
+
+=== MCP POST Request ===
+Timestamp: 2026-01-18T15:00:14.980Z
+Body: {
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+Headers: {
+  "host": "atfwhatsapp.ngrok.app",
+  "user-agent": "ElevenLabs/1.0",
+  "content-length": "54",
+  "accept": "application/json, text/event-stream",
+  "accept-encoding": "gzip, deflate, br",
+  "content-type": "application/json",
+  "x-forwarded-for": "34.59.11.47",
+  "x-forwarded-host": "atfwhatsapp.ngrok.app",
+  "x-forwarded-proto": "https"
+}
+IP Address: ::ffff:127.0.0.1
+========================
+
+
+=== Incoming Query ===
+Timestamp: 2026-01-18T15:00:29.839Z
+Method: POST
+Path: /mcp
+Request Body: {
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-03-26",
+    "capabilities": {},
+    "clientInfo": {
+      "name": "mcp",
+      "version": "0.1.0"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": 0
+}
+Headers: {
+  "host": "atfwhatsapp.ngrok.app",
+  "user-agent": "ElevenLabs/1.0",
+  "content-length": "152",
+  "accept": "application/json, text/event-stream",
+  "accept-encoding": "gzip, deflate, br",
+  "content-type": "application/json",
+  "x-forwarded-for": "34.59.11.47",
+  "x-forwarded-host": "atfwhatsapp.ngrok.app",
+  "x-forwarded-proto": "https"
+}
+IP Address: ::ffff:127.0.0.1
+User-Agent: ElevenLabs/1.0
+========================
+
+
+=== MCP POST Request ===
+Timestamp: 2026-01-18T15:00:29.840Z
+Body: {
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2025-03-26",
+    "capabilities": {},
+    "clientInfo": {
+      "name": "mcp",
+      "version": "0.1.0"
+    }
+  },
+  "jsonrpc": "2.0",
+  "id": 0
+}
+Headers: {
+  "host": "atfwhatsapp.ngrok.app",
+  "user-agent": "ElevenLabs/1.0",
+  "content-length": "152",
+  "accept": "application/json, text/event-stream",
+  "accept-encoding": "gzip, deflate, br",
+  "content-type": "application/json",
+  "x-forwarded-for": "34.59.11.47",
+  "x-forwarded-host": "atfwhatsapp.ngrok.app",
+  "x-forwarded-proto": "https"
+}
+IP Address: ::ffff:127.0.0.1
+========================
+
+[MCP Initialize] Intercepting initialize request with protocol version: 2025-03-26
+[MCP Initialize] Returning successful initialization response
+
+=== Incoming Query ===
+Timestamp: 2026-01-18T15:00:30.065Z
+Method: POST
+Path: /mcp
+Request Body: {
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+Headers: {
+  "host": "atfwhatsapp.ngrok.app",
+  "user-agent": "ElevenLabs/1.0",
+  "content-length": "54",
+  "accept": "application/json, text/event-stream",
+  "accept-encoding": "gzip, deflate, br",
+  "content-type": "application/json",
+  "x-forwarded-for": "34.59.11.47",
+  "x-forwarded-host": "atfwhatsapp.ngrok.app",
+  "x-forwarded-proto": "https"
+}
+IP Address: ::ffff:127.0.0.1
+User-Agent: ElevenLabs/1.0
+========================
+
+
+=== MCP POST Request ===
+Timestamp: 2026-01-18T15:00:30.065Z
+Body: {
+  "method": "notifications/initialized",
+  "jsonrpc": "2.0"
+}
+Headers: {
+  "host": "atfwhatsapp.ngrok.app",
+  "user-agent": "ElevenLabs/1.0",
+  "content-length": "54",
+  "accept": "application/json, text/event-stream",
+  "accept-encoding": "gzip, deflate, br",
+  "content-type": "application/json",
+  "x-forwarded-for": "34.59.11.47",
+  "x-forwarded-host": "atfwhatsapp.ngrok.app",
+  "x-forwarded-proto": "https"
+}
+IP Address: ::ffff:127.0.0.1
+========================
+

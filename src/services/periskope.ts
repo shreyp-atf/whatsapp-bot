@@ -110,6 +110,86 @@ export class PeriskopeClient {
     });
     return this.request(`/chats/${chatId}/messages?${params.toString()}`);
   }
+
+  /**
+   * List all webhooks
+   * GET /webhooks
+   */
+  async listWebhooks(): Promise<any> {
+    return this.request('/webhooks');
+  }
+
+  /**
+   * Get webhook by ID
+   * GET /webhooks/{id}
+   */
+  async getWebhookById(id: string): Promise<any> {
+    return this.request(`/webhooks/${id}`);
+  }
+
+  /**
+   * Create a new webhook
+   * POST /webhooks
+   * @param url - Webhook URL (must be publicly accessible)
+   * @param events - Array of event types to subscribe to
+   * @param integrationName - Integration name for the webhook
+   * @param signingKey - Optional signing key for webhook verification
+   * @param enabled - Whether the webhook is enabled (default: true)
+   */
+  async createWebhook(
+    url: string,
+    events: string[],
+    integrationName: string,
+    signingKey?: string,
+    enabled: boolean = true
+  ): Promise<any> {
+    const body: any = {
+      hookUrl: url,
+      integrationName,
+      events,
+      enabled,
+    };
+
+    if (signingKey) {
+      body.signing_key = signingKey;
+    }
+
+    return this.request('/webhooks', {
+      method: 'POST',
+      body: JSON.stringify(body),
+    });
+  }
+
+  /**
+   * Update a webhook
+   * PATCH /webhooks/{id}
+   * @param id - Webhook ID
+   * @param updates - Webhook update fields
+   */
+  async updateWebhook(
+    id: string,
+    updates: {
+      url?: string;
+      events?: string[];
+      enabled?: boolean;
+      signing_key?: string;
+    }
+  ): Promise<any> {
+    return this.request(`/webhooks/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updates),
+    });
+  }
+
+  /**
+   * Delete a webhook
+   * DELETE /webhooks/{id}
+   */
+  async deleteWebhook(id: string): Promise<void> {
+    await this.request(`/webhooks/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 // Export a singleton instance

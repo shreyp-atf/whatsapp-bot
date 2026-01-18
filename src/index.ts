@@ -1,7 +1,4 @@
 import express, { Request, Response } from 'express';
-import https from 'https';
-import fs from 'fs';
-import path from 'path';
 import dotenv from 'dotenv';
 import { routeWebhookEvent } from './handlers/webhookEventHandlers';
 import { verifySignature } from './utils/webhook';
@@ -24,6 +21,76 @@ app.use('/webhook', express.raw({ type: 'application/json' }));
 // Middleware to parse JSON bodies for other routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+/**
+ * Request logging middleware - logs all incoming queries
+ */
+app.use((req: Request, res: Response, next: express.NextFunction) => {
+  const timestamp = new Date().toISOString();
+  const method = req.method;
+  const path = req.path;
+  const query = Object.keys(req.query).length > 0 ? req.query : undefined;
+  const ip = req.ip || req.socket.remoteAddress || 'unknown';
+  
+  // Mask sensitive headers
+  const headers = { ...req.headers };
+  const sensitiveHeaders = ['authorization', 'cookie', 'x-periskope-signature', 'x-api-key'];
+  sensitiveHeaders.forEach(header => {
+    if (headers[header]) {
+      headers[header] = '[REDACTED]';
+    }
+  });
+  
+  // Handle body - could be Buffer (for webhook) or object (for other routes)
+  let body = req.body;
+  if (body instanceof Buffer) {
+    // For webhook routes with raw body, try to parse and log
+    try {
+      const parsed = JSON.parse(body.toString());
+      body = parsed;
+      // Mask sensitive fields
+      if (typeof body === 'object' && body !== null) {
+        body = { ...body };
+        const sensitiveFields = ['password', 'token', 'apiKey', 'secret', 'signingKey'];
+        sensitiveFields.forEach(field => {
+          if (body[field]) {
+            body[field] = '[REDACTED]';
+          }
+        });
+      }
+    } catch {
+      // If parsing fails, just log as raw buffer info
+      body = `[Buffer: ${body.length} bytes]`;
+    }
+  } else if (body && typeof body === 'object') {
+    // For parsed JSON bodies, mask sensitive fields
+    body = { ...body };
+    const sensitiveFields = ['password', 'token', 'apiKey', 'secret', 'signingKey'];
+    sensitiveFields.forEach(field => {
+      if (body[field]) {
+        body[field] = '[REDACTED]';
+      }
+    });
+  }
+  
+  // Log the request
+  console.log('\n=== Incoming Query ===');
+  console.log('Timestamp:', timestamp);
+  console.log('Method:', method);
+  console.log('Path:', path);
+  if (query) {
+    console.log('Query Parameters:', JSON.stringify(query, null, 2));
+  }
+  if (body && Object.keys(body).length > 0) {
+    console.log('Request Body:', JSON.stringify(body, null, 2));
+  }
+  console.log('Headers:', JSON.stringify(headers, null, 2));
+  console.log('IP Address:', ip);
+  console.log('User-Agent:', req.headers['user-agent'] || 'unknown');
+  console.log('========================\n');
+  
+  next();
+});
 
 /**
  * Webhook endpoint to receive all Periskope events
@@ -77,7 +144,11 @@ app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ 
     status: 'ok', 
     timestamp: new Date().toISOString(),
-    database: process.env.DATABASE_URL ? 'configured' : 'not configured'
+    database: process.env.DATABASE_URL ? 'configured' : 'not configured',
+    services: {
+      webhook: 'active',
+      api: 'active'
+    }
   });
 });
 
@@ -93,10 +164,11 @@ app.get('/health', (req: Request, res: Response) => {
 app.post('/api/users', handleCreateUser);
 
 /**
- * Get user by user ID
- * GET /api/users/:userId
+ * Get user by mobile number
+ * POST /api/users/get
+ * Body: { mobile_number: string }
  */
-app.get('/api/users/:userId', handleGetUser);
+app.post('/api/users/get', handleGetUser);
 
 /**
  * Get user persona by user ID
@@ -131,6 +203,7 @@ app.post('/api/send-event-details', handleSendEventDetails);
  */
 app.post('/api/activity-venue-maps', handleGetActivityVenueMaps);
 
+
 /**
  * Initialize database connection and start server
  */
@@ -161,42 +234,13 @@ async function startServer() {
     }
   }
 
-  // Load SSL certificates for HTTPS
-  const sslKeyPath = process.env.SSL_KEY_PATH || path.join(__dirname, '../ssl/key.pem');
-  const sslCertPath = process.env.SSL_CERT_PATH || path.join(__dirname, '../ssl/cert.pem');
 
-  let httpsOptions: https.ServerOptions | undefined;
-  let useHttps = false;
-
-  try {
-    // Check if SSL certificate files exist
-    if (fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath)) {
-      httpsOptions = {
-        key: fs.readFileSync(sslKeyPath),
-        cert: fs.readFileSync(sslCertPath),
-      };
-      useHttps = true;
-      console.log('✓ SSL certificates loaded');
-    } else {
-      console.error('✗ Warning: SSL certificates not found - server will use HTTP');
-      console.error(`  Expected key at: ${sslKeyPath}`);
-      console.error(`  Expected cert at: ${sslCertPath}`);
-      console.error('  Set SSL_KEY_PATH and SSL_CERT_PATH environment variables to use custom paths');
-      console.error('  Server will start in HTTP mode. For production, HTTPS is required.');
-    }
-  } catch (error) {
-    console.error('✗ Error loading SSL certificates:', error);
-    console.error('  Server will use HTTP');
-  }
-
-  const protocol = useHttps ? 'https' : 'http';
-  const serverType = useHttps ? 'HTTPS' : 'HTTP';
   const host = process.env.HOST || 'localhost';
-  const portSuffix = (PORT === 443 && useHttps) || (PORT === 80 && !useHttps) ? '' : `:${PORT}`;
-  const baseUrl = `${protocol}://${host}${portSuffix}`;
+  const portSuffix = PORT === 80 ? '' : `:${PORT}`;
+  const baseUrl = `http://${host}${portSuffix}`;
 
   const startCallback = () => {
-    console.log(`\n🚀 WhatsApp Bot Server (${serverType})`);
+    console.log(`\n🚀 WhatsApp Bot Server (HTTP)`);
     console.log(`Server is running on port ${PORT}`);
     console.log(`Health check: ${baseUrl}/health`);
     console.log(`Webhook endpoint: ${baseUrl}/webhook`);
@@ -215,22 +259,13 @@ async function startServer() {
       console.error('✗ Warning: PERISKOPE_SIGNING_KEY not set - webhook requests will be rejected');
     }
 
-    if (useHttps) {
-      console.log(`\n✓ Server running in HTTPS mode`);
-      console.log(`  Webhook URL for Periskope: ${baseUrl}/webhook`);
-    } else {
-      console.error(`\n✗ Server running in HTTP mode (not secure)`);
-      console.error(`  For production, configure SSL certificates to enable HTTPS`);
-    }
+    console.log(`\n✓ Server running in HTTP mode`);
+    console.log(`  Webhook URL for Periskope: ${baseUrl}/webhook`);
     
     console.log('\nWaiting for webhook events...\n');
   };
 
-  if (useHttps && httpsOptions) {
-    https.createServer(httpsOptions, app).listen(PORT, startCallback);
-  } else {
-    app.listen(PORT, startCallback);
-  }
+  app.listen(PORT, startCallback);
 }
 
 // Start the server

@@ -89,23 +89,42 @@ export async function handleCreateUser(req: Request, res: Response): Promise<voi
 }
 
 /**
- * Get user by user ID
- * GET /api/users/:userId
+ * Get user by mobile number
+ * POST /api/users/get
+ * Body: { mobile_number: string }
  */
 export async function handleGetUser(req: Request, res: Response): Promise<void> {
   try {
-    const userId = parseInt(req.params.userId, 10);
+    const { mobile_number } = req.body;
+    
+    if (mobile_number === undefined || mobile_number === null) {
+      res.status(400).json({
+        success: false,
+        error: 'mobile_number is required'
+      });
+      return;
+    }
+
+    if (typeof mobile_number !== 'string') {
+      res.status(400).json({
+        success: false,
+        error: 'mobile_number must be a string'
+      });
+      return;
+    }
+
+    const userId = parseInt(mobile_number, 10);
     
     if (isNaN(userId)) {
       res.status(400).json({
         success: false,
-        error: 'userId must be a valid number'
+        error: 'mobile_number must be a valid numeric string'
       });
       return;
     }
 
     console.log(`[API] Fetching user`, {
-      userId
+      mobile_number: userId
     });
 
     const user = await getUserById(userId);
@@ -113,8 +132,8 @@ export async function handleGetUser(req: Request, res: Response): Promise<void> 
     if (!user) {
       res.status(404).json({
         success: false,
-        error: `User with id ${userId} not found`,
-        userId
+        error: `User with mobile number ${userId} not found`,
+        mobile_number: userId
       });
       return;
     }
