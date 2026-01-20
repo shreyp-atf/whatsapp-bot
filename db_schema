@@ -2,7 +2,7 @@
 -- Table order and constraints may not be valid for execution.
 
 CREATE TABLE public.activity (
-  activity_id numeric NOT NULL,
+  activity_id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   name text NOT NULL,
   description text NOT NULL,
@@ -28,8 +28,8 @@ CREATE TABLE public.activity_venue_map (
   img_url text,
   booking_link text NOT NULL,
   CONSTRAINT activity_venue_map_pkey PRIMARY KEY (id),
-  CONSTRAINT activity_venue_map_activity_id_fkey FOREIGN KEY (activity_id) REFERENCES public.activity(activity_id),
-  CONSTRAINT activity_venue_map_venue_id_fkey FOREIGN KEY (venue_id) REFERENCES public.venue(venue_id)
+  CONSTRAINT activity_venue_map_venue_id_fkey FOREIGN KEY (venue_id) REFERENCES public.venue(venue_id),
+  CONSTRAINT activity_venue_map_activity_id_fkey FOREIGN KEY (activity_id) REFERENCES public.activity(activity_id)
 );
 CREATE TABLE public.city (
   city_id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
@@ -39,18 +39,19 @@ CREATE TABLE public.city (
   CONSTRAINT city_pkey PRIMARY KEY (city_id)
 );
 CREATE TABLE public.city_region (
-  city_region_id numeric NOT NULL,
+  city_region_id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   name text NOT NULL,
   city_id bigint,
   CONSTRAINT city_region_pkey PRIMARY KEY (city_region_id),
-  CONSTRAINT city_region_city_id_fkey FOREIGN KEY (city_id) REFERENCES public.city(city_id)
+  CONSTRAINT city_region_city_id_fkey FOREIGN KEY (city_id) REFERENCES public.city(city_id),
+  CONSTRAINT city_region_city_fkey FOREIGN KEY (city_id) REFERENCES public.city(city_id)
 );
 CREATE TABLE public.connection_graph (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
-  user1 numeric NOT NULL,
-  user2 numeric NOT NULL,
+  user1 bigint NOT NULL,
+  user2 bigint NOT NULL,
   CONSTRAINT connection_graph_pkey PRIMARY KEY (id),
   CONSTRAINT connection_graph_user1_fkey FOREIGN KEY (user1) REFERENCES public.user(user_id),
   CONSTRAINT connection_graph_user2_fkey FOREIGN KEY (user2) REFERENCES public.user(user_id)
@@ -60,7 +61,7 @@ CREATE TABLE public.group (
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   title text NOT NULL,
   description text,
-  added_by numeric,
+  added_by bigint,
   CONSTRAINT group_pkey PRIMARY KEY (group_id),
   CONSTRAINT group_added_by_fkey FOREIGN KEY (added_by) REFERENCES public.user(user_id)
 );
@@ -68,29 +69,29 @@ CREATE TABLE public.group_participant (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   group_id text NOT NULL,
-  user_id numeric NOT NULL,
+  user_id bigint NOT NULL,
   role text,
   CONSTRAINT group_participant_pkey PRIMARY KEY (id),
   CONSTRAINT group_participant_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.group(group_id),
-  CONSTRAINT group_participant_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user(user_id)
+  CONSTRAINT group_participant_user_fkey FOREIGN KEY (user_id) REFERENCES public.user(user_id)
 );
 CREATE TABLE public.locality (
-  locality_id numeric NOT NULL,
+  locality_id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   name text NOT NULL,
   pincode text NOT NULL,
   address text NOT NULL,
   latitude numeric NOT NULL,
   longitude numeric NOT NULL,
-  city_region_id numeric NOT NULL,
+  city_region_id bigint NOT NULL,
   CONSTRAINT locality_pkey PRIMARY KEY (locality_id),
-  CONSTRAINT locality_city_region_id_fkey FOREIGN KEY (city_region_id) REFERENCES public.city_region(city_region_id)
+  CONSTRAINT locality_city_region_fkey FOREIGN KEY (city_region_id) REFERENCES public.city_region(city_region_id)
 );
 CREATE TABLE public.plan (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   start_time timestamp with time zone NOT NULL,
-  prompted_by numeric NOT NULL,
+  prompted_by bigint NOT NULL,
   status bigint NOT NULL,
   is_public boolean NOT NULL,
   CONSTRAINT plan_pkey PRIMARY KEY (id),
@@ -109,26 +110,27 @@ CREATE TABLE public.plan_participant (
   id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   plan_id uuid NOT NULL,
-  user_id numeric NOT NULL,
+  user_id bigint NOT NULL,
   status bigint NOT NULL,
-  invited_by numeric NOT NULL,
+  invited_by bigint NOT NULL,
   interest_tier bigint NOT NULL,
   friend_tier bigint NOT NULL,
   CONSTRAINT plan_participant_pkey PRIMARY KEY (id),
   CONSTRAINT plan_participant_plan_id_fkey FOREIGN KEY (plan_id) REFERENCES public.plan(id),
-  CONSTRAINT plan_participant_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.user(user_id),
+  CONSTRAINT plan_participant_user_fkey FOREIGN KEY (user_id) REFERENCES public.user(user_id),
   CONSTRAINT plan_participant_invited_by_fkey FOREIGN KEY (invited_by) REFERENCES public.user(user_id)
 );
 CREATE TABLE public.user (
-  user_id numeric NOT NULL,
+  user_id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
   created_at timestamp with time zone NOT NULL DEFAULT now(),
   updated_at timestamp with time zone NOT NULL,
   name text,
   bio text,
   persona_json json,
   locality_id numeric,
-  CONSTRAINT user_pkey PRIMARY KEY (user_id),
-  CONSTRAINT user_locality_id_fkey FOREIGN KEY (locality_id) REFERENCES public.locality(locality_id)
+  conversation_id text,
+  id uuid NOT NULL DEFAULT gen_random_uuid() UNIQUE,
+  CONSTRAINT user_pkey PRIMARY KEY (user_id)
 );
 CREATE TABLE public.venue (
   venue_id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
@@ -149,5 +151,6 @@ CREATE TABLE public.venue (
   updated_at timestamp with time zone NOT NULL,
   locality_id bigint NOT NULL DEFAULT '-1'::bigint,
   CONSTRAINT venue_pkey PRIMARY KEY (venue_id),
-  CONSTRAINT venue_details_locality_id_fkey FOREIGN KEY (locality_id) REFERENCES public.locality(locality_id)
+  CONSTRAINT venue_details_locality_id_fkey FOREIGN KEY (locality_id) REFERENCES public.locality(locality_id),
+  CONSTRAINT venue_locality_fkey FOREIGN KEY (locality_id) REFERENCES public.locality(locality_id)
 );

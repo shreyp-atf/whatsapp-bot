@@ -2,10 +2,16 @@
  * PostgreSQL database connection
  */
 
-import { Pool, PoolClient } from 'pg';
+import { Pool, PoolClient, types } from 'pg';
 import dotenv from 'dotenv';
 
 dotenv.config();
+
+// Configure pg to parse bigint (int8) as numbers instead of strings
+// This is safe for IDs (user_id, locality_id, etc.) as they fit within JavaScript's safe integer range
+types.setTypeParser(types.builtins.INT8, (val: string) => {
+  return parseInt(val, 10);
+});
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -24,14 +30,10 @@ pool.on('error', (err) => {
 export const getPool = (): Pool => pool;
 
 export const query = async (text: string, params?: any[]): Promise<any> => {
-  const start = Date.now();
   try {
     const res = await pool.query(text, params);
-    const duration = Date.now() - start;
-    console.log('Executed query', { text, duration, rows: res.rowCount });
     return res;
   } catch (error) {
-    console.error('Query error:', { text, error });
     throw error;
   }
 };

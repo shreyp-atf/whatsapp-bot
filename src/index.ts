@@ -8,6 +8,7 @@ import { checkOpenAIStatus } from './ai';
 import { handleCreateUser, handleGetUser, handleGetUserPersona } from './handlers/userHandlers';
 import { handleGetChatMessages } from './handlers/chatHandlers';
 import { handleGetActivityVenueMap, handleSendEventDetails, handleGetActivityVenueMaps } from './handlers/activityVenueMapHandlers';
+import { setupMcpServer, handleMcpRequest, resetMcpServer, isAdminSession } from './mcp';
 
 // Load environment variables
 dotenv.config();
@@ -18,7 +19,8 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 // Middleware to capture raw body for signature verification on webhook endpoint
 app.use('/webhook', express.raw({ type: 'application/json' }));
 
-// Middleware to parse JSON bodies for other routes
+// Middleware to parse JSON bodies for MCP and other routes
+app.use('/mcp', express.json());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -73,21 +75,26 @@ app.use((req: Request, res: Response, next: express.NextFunction) => {
     });
   }
   
-  // Log the request
-  console.log('\n=== Incoming Query ===');
-  console.log('Timestamp:', timestamp);
-  console.log('Method:', method);
-  console.log('Path:', path);
-  if (query) {
-    console.log('Query Parameters:', JSON.stringify(query, null, 2));
+  // Skip logging for MCP protocol methods: initialize, tools/list, notifications/initialized
+  const skipLoggingMethods = ['initialize', 'tools/list', 'notifications/initialized'];
+  const shouldSkipLogging = body && typeof body === 'object' && 'method' in body && skipLoggingMethods.includes(body.method);
+  
+  if (!shouldSkipLogging) {
+    // Log the request
+    console.log('\n=== Incoming Query ===');
+    console.log('Timestamp:', timestamp);
+    console.log('Method:', method);
+    console.log('Path:', path);
+    if (query) {
+      console.log('Query Parameters:', JSON.stringify(query, null, 2));
+    }
+    if (body && Object.keys(body).length > 0) {
+      console.log('Request Body:', JSON.stringify(body, null, 2));
+    }
+    console.log('IP Address:', ip);
+    console.log('User-Agent:', req.headers['user-agent'] || 'unknown');
+    console.log('========================\n');
   }
-  if (body && Object.keys(body).length > 0) {
-    console.log('Request Body:', JSON.stringify(body, null, 2));
-  }
-  console.log('Headers:', JSON.stringify(headers, null, 2));
-  console.log('IP Address:', ip);
-  console.log('User-Agent:', req.headers['user-agent'] || 'unknown');
-  console.log('========================\n');
   
   next();
 });
@@ -203,11 +210,126 @@ app.post('/api/send-event-details', handleSendEventDetails);
  */
 app.post('/api/activity-venue-maps', handleGetActivityVenueMaps);
 
+/**
+ * MCP Server Endpoints
+ * These are the primary endpoints for the MCP server
+ * Transport will be initialized before server starts
+ */
+let mcpTransport: Awaited<ReturnType<typeof setupMcpServer>>['transport'] | null = null;
+let mcpServer: Awaited<ReturnType<typeof setupMcpServer>>['server'] | null = null;
+
+// POST endpoint for client → server messages
+app.post('/mcp', async (req: Request, res: Response) => {
+  try {
+    if (!mcpTransport) {
+      return res.status(503).json({
+        error: 'Service unavailable',
+        message: 'MCP transport not initialized',
+      });
+    }
+    
+    // Pass the parsed body to handleMcpRequest
+    await handleMcpRequest(mcpTransport, req, res, req.body);
+  } catch (error) {
+    console.error('Error handling MCP request:', error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+});
+
+// GET endpoint for server → client streaming (SSE)
+app.get('/mcp', async (req: Request, res: Response) => {
+  try {
+    if (!mcpTransport) {
+      return res.status(503).json({
+        error: 'Service unavailable',
+        message: 'MCP transport not initialized',
+      });
+    }
+    await handleMcpRequest(mcpTransport, req, res);
+  } catch (error) {
+    console.error('Error handling MCP GET request:', error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+});
+
+// DELETE endpoint to destroy session
+app.delete('/mcp', async (req: Request, res: Response) => {
+  try {
+    if (!mcpTransport || !mcpServer) {
+      return res.status(503).json({
+        error: 'Service unavailable',
+        message: 'MCP transport not initialized',
+      });
+    }
+
+    const sessionId = req.headers['mcp-session-id'] as string | undefined;
+    
+    // Admin sessions cannot be destroyed - they persist
+    if (isAdminSession(sessionId)) {
+      return res.status(200).json({
+        success: true,
+        message: 'Admin session cannot be destroyed',
+        sessionId: sessionId,
+        isAdmin: true,
+      });
+    }
+    
+    if (sessionId) {
+      console.log(`Destroying session: ${sessionId}`);
+    }
+
+    // Reset the server and transport to allow re-initialization
+    await resetMcpServer(mcpServer, mcpTransport);
+    
+    // Create new server and transport instances
+    const { server, transport } = await setupMcpServer();
+    mcpServer = server;
+    mcpTransport = transport;
+    
+    // Send success response
+    res.status(200).json({
+      success: true,
+      message: 'Session destroyed successfully',
+      sessionId: sessionId || undefined,
+    });
+  } catch (error) {
+    console.error('Error destroying MCP session:', error);
+    if (!res.headersSent) {
+      res.status(500).json({
+        error: 'Internal server error',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      });
+    }
+  }
+});
 
 /**
  * Initialize database connection and start server
  */
 async function startServer() {
+  // Set up MCP server first (main product)
+  console.log('Setting up MCP server...');
+  
+  try {
+    const { transport, server } = await setupMcpServer();
+    mcpTransport = transport;
+    mcpServer = server;
+    console.log('✓ MCP server initialized with streamable HTTP transport');
+  } catch (error) {
+    console.error('✗ Failed to initialize MCP server:', error);
+    process.exit(1);
+  }
+
   // Verify database connection before starting server
   if (process.env.DATABASE_URL) {
     console.log('Verifying database connection...');
@@ -234,19 +356,21 @@ async function startServer() {
     }
   }
 
-
   const host = process.env.HOST || 'localhost';
   const portSuffix = PORT === 80 ? '' : `:${PORT}`;
   const baseUrl = `http://${host}${portSuffix}`;
 
   const startCallback = () => {
-    console.log(`\n🚀 WhatsApp Bot Server (HTTP)`);
+    console.log(`\n🚀 MCP Server (Streamable HTTP)`);
     console.log(`Server is running on port ${PORT}`);
-    console.log(`Health check: ${baseUrl}/health`);
-    console.log(`Webhook endpoint: ${baseUrl}/webhook`);
-    console.log(`\n📡 API Endpoints:`);
+    console.log(`\n📡 MCP Endpoints (Primary):`);
+    console.log(`  POST ${baseUrl}/mcp - Client → Server messages`);
+    console.log(`  GET  ${baseUrl}/mcp - Server → Client streaming (SSE)`);
+    console.log(`\n📡 Webhook & API Endpoints:`);
+    console.log(`  POST ${baseUrl}/webhook - Periskope webhook events`);
+    console.log(`  GET  ${baseUrl}/health - Health check`);
     console.log(`  POST ${baseUrl}/api/users`);
-    console.log(`  GET  ${baseUrl}/api/users/:userId`);
+    console.log(`  POST ${baseUrl}/api/users/get`);
     console.log(`  GET  ${baseUrl}/api/users/:userId/persona`);
     console.log(`  GET  ${baseUrl}/api/chats/:chatId/messages?offset=0&limit=2000`);
     console.log(`  GET  ${baseUrl}/api/activity-venue-maps/:id`);
@@ -259,10 +383,7 @@ async function startServer() {
       console.error('✗ Warning: PERISKOPE_SIGNING_KEY not set - webhook requests will be rejected');
     }
 
-    console.log(`\n✓ Server running in HTTP mode`);
-    console.log(`  Webhook URL for Periskope: ${baseUrl}/webhook`);
-    
-    console.log('\nWaiting for webhook events...\n');
+    console.log(`\n✓ MCP server ready and waiting for connections...\n`);
   };
 
   app.listen(PORT, startCallback);

@@ -22,14 +22,16 @@ export async function getUserView(userId: number): Promise<UserView | null> {
   
   // Get connected users
   // connection_graph has user1 and user2, we need to get the other user in each connection
+  // Using DISTINCT ON to avoid JSON equality operator issues with DISTINCT
   const connectionsResult = await query(
-    `SELECT DISTINCT u.*
+    `SELECT DISTINCT ON (u.user_id) u.*
      FROM public.connection_graph cg
      INNER JOIN public.user u ON u.user_id = CASE 
        WHEN cg.user1 = $1 THEN cg.user2
        WHEN cg.user2 = $1 THEN cg.user1
      END
-     WHERE (cg.user1 = $1 OR cg.user2 = $1)`,
+     WHERE (cg.user1 = $1 OR cg.user2 = $1)
+     ORDER BY u.user_id`,
     [userId]
   );
   
