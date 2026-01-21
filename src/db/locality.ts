@@ -4,6 +4,7 @@
 
 import { query } from './connection';
 import { Locality } from '../types/database';
+import { PoolClient } from 'pg';
 
 /**
  * Get locality by locality_id
@@ -95,5 +96,32 @@ export async function localityExists(localityId: number): Promise<boolean> {
     [localityId]
   );
   return result.rowCount > 0;
+}
+
+/**
+ * Create a new locality
+ */
+export async function createLocality(
+  input: {
+    name: string;
+    pincode: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    city_region_id: number;
+  },
+  client?: PoolClient
+): Promise<Locality> {
+  const now = new Date();
+  const queryFn = client ? client.query.bind(client) : query;
+
+  const result = await queryFn(
+    `INSERT INTO public.locality (created_at, name, pincode, address, latitude, longitude, city_region_id)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)
+     RETURNING *`,
+    [now, input.name, input.pincode, input.address, input.latitude, input.longitude, input.city_region_id]
+  );
+
+  return result.rows[0];
 }
 

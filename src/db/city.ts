@@ -4,6 +4,7 @@
 
 import { query } from './connection';
 import { City } from '../types/database';
+import { PoolClient } from 'pg';
 
 /**
  * Get city by city_id
@@ -60,5 +61,44 @@ export async function cityExists(cityId: number): Promise<boolean> {
     [cityId]
   );
   return result.rowCount > 0;
+}
+
+/**
+ * Get city by name and country
+ */
+export async function getCityByNameAndCountry(
+  name: string, 
+  country: string, 
+  client?: PoolClient
+): Promise<City | null> {
+  const queryFn = client ? client.query.bind(client) : query;
+  const result = await queryFn(
+    'SELECT * FROM public.city WHERE name ILIKE $1 AND country = $2',
+    [name, country]
+  );
+  return result.rows[0] || null;
+}
+
+/**
+ * Create a new city
+ */
+export async function createCity(
+  input: {
+    country: string;
+    name: string;
+  },
+  client?: PoolClient
+): Promise<City> {
+  const now = new Date();
+  const queryFn = client ? client.query.bind(client) : query;
+
+  const result = await queryFn(
+    `INSERT INTO public.city (created_at, country, name)
+     VALUES ($1, $2, $3)
+     RETURNING *`,
+    [now, input.country, input.name]
+  );
+
+  return result.rows[0];
 }
 

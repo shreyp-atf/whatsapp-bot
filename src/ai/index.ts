@@ -209,3 +209,7 @@ export { optimizePlansForUser } from './optimizer';
 // Export conversation agent
 export { ConversationAgent, conversationAgent } from './conversationAgent';
 export type { ConversationAgentConfig, ConversationMessage } from './conversationAgent';
+
+// Export extraction agent
+export { ExtractionAgent, extractionAgent } from './extractionAgent';
+export type { ExtractionAgentConfig } from './extractionAgent';

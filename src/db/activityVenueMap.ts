@@ -4,6 +4,7 @@
 
 import { query } from './connection';
 import { ActivityVenueMap } from '../types/database';
+import { PoolClient } from 'pg';
 
 /**
  * Get activity venue map by id
@@ -391,6 +392,63 @@ export async function getActivityVenueMapsCountByVenueId(venueId: number): Promi
     [venueId]
   );
   return parseInt(result.rows[0].count, 10);
+}
+
+/**
+ * Create a new activity venue map entry
+ */
+export async function createActivityVenueMap(
+  input: {
+    activity_id: number;
+    venue_id: number;
+    start_time: Date;
+    end_time: Date;
+    is_active?: boolean;
+    is_public?: boolean;
+    max_people: number;
+    parallel_slots: number;
+    is_hosted?: boolean;
+    date: Date;
+    is_ticketed: boolean;
+    ticket_price?: number;
+    description: string;
+    img_url?: string;
+    booking_link: string;
+  },
+  client?: PoolClient
+): Promise<ActivityVenueMap> {
+  const now = new Date();
+  const queryFn = client ? client.query.bind(client) : query;
+
+  const result = await queryFn(
+    `INSERT INTO public.activity_venue_map (
+      created_at, activity_id, venue_id, start_time, end_time, is_active,
+      is_public, max_people, parallel_slots, is_hosted, date, is_ticketed,
+      ticket_price, description, img_url, booking_link
+     )
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+     RETURNING *`,
+    [
+      now,
+      input.activity_id,
+      input.venue_id,
+      input.start_time,
+      input.end_time,
+      input.is_active ?? true,
+      input.is_public ?? true,
+      input.max_people,
+      input.parallel_slots,
+      input.is_hosted ?? false,
+      input.date,
+      input.is_ticketed,
+      input.ticket_price,
+      input.description,
+      input.img_url,
+      input.booking_link
+    ]
+  );
+
+  return result.rows[0];
 }
 
 /**

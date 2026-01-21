@@ -4,6 +4,7 @@
 
 import { query } from './connection';
 import { CityRegion } from '../types/database';
+import { PoolClient } from 'pg';
 
 /**
  * Get city region by city_region_id
@@ -60,5 +61,28 @@ export async function cityRegionExists(cityRegionId: number): Promise<boolean> {
     [cityRegionId]
   );
   return result.rowCount > 0;
+}
+
+/**
+ * Create a new city region
+ */
+export async function createCityRegion(
+  input: {
+    city_id: number;
+    name: string;
+  },
+  client?: PoolClient
+): Promise<CityRegion> {
+  const now = new Date();
+  const queryFn = client ? client.query.bind(client) : query;
+
+  const result = await queryFn(
+    `INSERT INTO public.city_region (created_at, city_id, name)
+     VALUES ($1, $2, $3)
+     RETURNING *`,
+    [now, input.city_id, input.name]
+  );
+
+  return result.rows[0];
 }
 

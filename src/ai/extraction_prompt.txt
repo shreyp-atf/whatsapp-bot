@@ -1,0 +1,30 @@
+{{URL}}
+
+cross reference across bookmyshow, district and any other movie listing platforms to find shows of Dhurandhar movie in Delhi NCR, on 22nd Jan, 2026
+
+Response format - (json format)
+
+{
+    "events": [
+    {
+    "activity": "Dhurandhar movie screening",
+    "venues": [{
+        "venue_name": "Devgn CineX (Formerly NY) : Elan Epic, Gurugram",
+        "venue_address": "Elan Epic, Gurugram (as listed on District)",
+        "locality_name": "Elan Epic",
+        "city": "Gurugram",
+        "timings": [{"date": "2026-01-22", "start":"11:30", "is_ticketed": true, "min_price": 300, "duration": "2 hours"}],
+        "booking_links": [
+        "https://www.district.in/movies/dhurandhar-movie-tickets-in-gurgaon-MV201380?frmtid=2j8pr99vjk&fromdate=2026-01-22"
+        ],
+        "confidence": "high",
+        "extraction_notes": "District listing for 22 Jan includes these showtimes under Devgn CineX (Elan Epic)."
+        },
+        .,
+        .,
+    ]
+  },
+  .,
+  .,
+]
+}

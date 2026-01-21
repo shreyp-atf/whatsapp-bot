@@ -4,6 +4,7 @@
 
 import { query } from './connection';
 import { Venue } from '../types/database';
+import { PoolClient } from 'pg';
 
 /**
  * Get venue by venue_id
@@ -135,5 +136,61 @@ export async function venueExists(venueId: number): Promise<boolean> {
     [venueId]
   );
   return result.rowCount > 0;
+}
+
+/**
+ * Create a new venue
+ */
+export async function createVenue(
+  input: {
+    name: string;
+    latitude: number;
+    longitude: number;
+    google_maps_location: string;
+    directions_to_reach: string | null;
+    address: string;
+    is_public?: boolean;
+    is_active?: boolean;
+    is_verified?: boolean;
+    is_approved?: boolean;
+    price_point: number | null;
+    open_time: string;
+    close_time: string;
+    locality_id: number;
+  },
+  client?: PoolClient
+): Promise<Venue> {
+  const now = new Date();
+  const queryFn = client ? client.query.bind(client) : query;
+
+  const result = await queryFn(
+    `INSERT INTO public.venue (
+      created_at, name, latitude, longitude, google_maps_location, directions_to_reach,
+      address, is_public, is_active, is_verified, is_approved, price_point,
+      open_time, close_time, updated_at, locality_id
+     )
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+     RETURNING *`,
+    [
+      now,
+      input.name,
+      input.latitude,
+      input.longitude,
+      input.google_maps_location,
+      input.directions_to_reach,
+      input.address,
+      input.is_public ?? true,
+      input.is_active ?? true,
+      input.is_verified ?? false,
+      input.is_approved ?? false,
+      input.price_point,
+      input.open_time,
+      input.close_time,
+      now,
+      input.locality_id
+    ]
+  );
+
+  return result.rows[0];
 }
 
