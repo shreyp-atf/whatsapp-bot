@@ -46,13 +46,14 @@ const VenueRowSchema = z.object({
   google_maps_location: z.string().min(1),
   directions_to_reach: z.string().nullable(),
   address: z.string().min(1),
-  is_public: z.boolean().default(true),
-  is_active: z.boolean().default(true),
+  is_public: z.boolean().default(false),
+  is_active: z.boolean().default(false),
   is_verified: z.boolean().default(false),
   is_approved: z.boolean().default(false),
   price_point: z.number().min(1).max(5).nullable(),
   open_time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
   close_time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
+  type: z.string().min(1),
   research_notes: z.string().min(1)
 });
 
@@ -111,7 +112,8 @@ For the venue row, you need to:
 - Find accurate latitude/longitude coordinates
 - Generate or find a Google Maps location URL
 - Get detailed address information
-- Set default boolean flags (is_public=true, is_active=true, is_verified=false, is_approved=false)
+- Determine the venue type (e.g., "restaurant", "cafe", "bar", "theater", "stadium", "park", "mall", "hotel", "museum", "gallery", "club", "venue", "hall", "arena", "auditorium", etc.) - this is REQUIRED
+- Set default boolean flags (is_public=false, is_active=false, is_verified=false, is_approved=false)
 - Determine price point (1-5 scale, where 1 is budget and 5 is luxury, null if unknown)
 - Find typical operating hours (open_time and close_time in HH:MM format)
 - Include research notes explaining your sources and reasoning
@@ -373,7 +375,8 @@ async function performDatabaseOperations(
       price_point: venue_row.price_point,
       open_time: venue_row.open_time,
       close_time: venue_row.close_time,
-      locality_id: localityId
+      locality_id: localityId,
+      type: venue_row.type
     }, client);
     venueId = newVenue.venue_id;
     createdNewVenue = true;

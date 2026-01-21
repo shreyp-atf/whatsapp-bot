@@ -103,6 +103,7 @@ export interface Venue {
   close_time: string;
   updated_at: Date;
   locality_id: number;
+  type: string;
 }
 
 export interface ActivityVenueMap {

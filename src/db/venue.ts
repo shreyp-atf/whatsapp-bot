@@ -157,6 +157,7 @@ export async function createVenue(
     open_time: string;
     close_time: string;
     locality_id: number;
+    type: string;
   },
   client?: PoolClient
 ): Promise<Venue> {
@@ -167,9 +168,9 @@ export async function createVenue(
     `INSERT INTO public.venue (
       created_at, name, latitude, longitude, google_maps_location, directions_to_reach,
       address, is_public, is_active, is_verified, is_approved, price_point,
-      open_time, close_time, updated_at, locality_id
+      open_time, close_time, updated_at, locality_id, type
      )
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
      RETURNING *`,
     [
       now,
@@ -179,15 +180,16 @@ export async function createVenue(
       input.google_maps_location,
       input.directions_to_reach,
       input.address,
-      input.is_public ?? true,
-      input.is_active ?? true,
+      input.is_public ?? false,
+      input.is_active ?? false,
       input.is_verified ?? false,
       input.is_approved ?? false,
       input.price_point,
       input.open_time,
       input.close_time,
       now,
-      input.locality_id
+      input.locality_id,
+      input.type
     ]
   );
 
