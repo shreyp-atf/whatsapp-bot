@@ -6,8 +6,8 @@
  */
 
 import { EventCategory, EVENT_CATEGORIES } from '../utils/schemas';
-import { extractMovieInformation } from './movieAgent';
-import { extractGokartingInformation } from './gokartingAgent';
+import { extractMovieInformation } from './helpers';
+import { extractGokartingInformation } from './helpers';
 
 /**
  * xAI-specific configuration for event categories with specialized agents

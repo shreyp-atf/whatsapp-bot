@@ -7,22 +7,16 @@
 
 import { runVenueLocalityWorkflow, performVenueDatabaseOperations } from '../ai/venueAgent';
 import { withTransaction } from '../db/connection';
+import { parseVenueAgentArgs } from './utils/cliArgs';
 
 async function main() {
   try {
-    // Get venue name and location from command line arguments
-    const args = process.argv.slice(1);
+    const config = parseVenueAgentArgs();
+    const { venueName, enableLogging } = config;
 
-    if (args.length < 2) {
-      console.error('✗ Error: Venue name is required as command line argument');
-      console.log('Usage: ts-node src/scripts/runVenueAgent.ts "<venue name>" [logging=true]');
-      console.log('Example: ts-node src/scripts/runVenueAgent.ts "DLF Mall of India"');
-      console.log('Example: ts-node src/scripts/runVenueAgent.ts "Kingdom of Dreams" logging=true');
-      process.exit(1);
-    }
-
-    const venueName = args[1];
-    const enableLogging = args.includes('logging=true');
+    // Note: Venue agent currently only supports OpenAI
+    // Provider selection is parsed but not yet implemented for venue workflow
+    console.log(`Note: Venue agent currently uses OpenAI (provider selection coming soon)\n`);
 
     if (enableLogging) {
       console.log('📊 LLM query timing enabled\n');

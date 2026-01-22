@@ -17,8 +17,9 @@ export async function getCityRegionById(cityRegionId: number): Promise<CityRegio
 /**
  * Get all city regions
  */
-export async function getAllCityRegions(): Promise<CityRegion[]> {
-  const result = await query('SELECT * FROM public.city_region ORDER BY name');
+export async function getAllCityRegions(client?: PoolClient): Promise<CityRegion[]> {
+  const queryFn = client ? client.query.bind(client) : query;
+  const result = await queryFn('SELECT * FROM public.city_region ORDER BY name');
   return result.rows;
 }
 

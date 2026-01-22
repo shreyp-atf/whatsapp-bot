@@ -28,3 +28,6 @@ export * from './transactionWrapper';
 
 // Event Category Configuration
 export * from './eventCategoryConfig';
+
+// Agent Definitions
+export * from './agents';

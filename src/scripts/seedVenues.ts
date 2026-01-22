@@ -9,6 +9,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 import { runVenueLocalityWorkflow, performVenueDatabaseOperations } from '../ai/venueAgent';
 import { withTransaction } from '../db/connection';
+import { parseSeedVenuesArgs } from './utils/cliArgs';
 
 interface VenueSeed {
   venue_name: string;
@@ -31,12 +32,6 @@ interface VenueProcessingResult {
 
 // Configuration: Number of venues to process in parallel per batch
 const BATCH_SIZE = 5;
-
-// Parse CLI arguments for logging flag
-function parseLoggingFlag(): boolean {
-  const args = process.argv.slice(2);
-  return args.includes('logging=true');
-}
 
 async function processVenue(venue: VenueSeed, enableLogging: boolean = false): Promise<VenueProcessingResult> {
   try {
@@ -95,8 +90,15 @@ async function processVenue(venue: VenueSeed, enableLogging: boolean = false): P
 
 async function main() {
   try {
-    // Check for logging flag
-    const enableLogging = parseLoggingFlag();
+    const config = parseSeedVenuesArgs();
+    const { enableLogging, provider } = config;
+
+    // Note: Venue agent currently only supports OpenAI
+    // Provider selection is parsed but not yet implemented for venue workflow
+    if (provider === 'xai') {
+      console.log('⚠ Warning: Venue agent currently only supports OpenAI. Using OpenAI instead.\n');
+    }
+
     if (enableLogging) {
       console.log('📊 LLM query timing enabled\n');
     }

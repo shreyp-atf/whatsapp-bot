@@ -1,16 +1,15 @@
 /**
- * xAI Agents Orchestrator
- *
- * This module provides the main orchestration for xAI-based URL processing pipeline.
- * It coordinates all xAI agents to extract and create database entities from URLs.
+ * SDK-Agnostic URL Processing Workflow
+ * 
+ * Core workflow logic for processing URLs through the event extraction pipeline.
+ * This workflow is provider-agnostic and routes to provider-specific executors.
  */
 
-import { Pipeline, createUrlProcessingPipeline } from '../utils/pipeline';
-import { executeAgentWithTransaction } from '../utils/transactionWrapper';
-import { xaiAgentLogger as logger } from '../utils/logging';
+import { logger } from '../utils/logging';
 import { classifyError } from '../utils/errorHandling';
 import { findOrCreateWithSimilarity, findOrCreate } from '../utils/dbOperations';
 import { withTransaction } from '../../db/connection';
+import type { PoolClient } from 'pg';
 import { 
   getCityByNameAndCountry, 
   getAllCities, 
@@ -37,128 +36,99 @@ import {
   createActivity 
 } from '../../db/activity';
 import { createActivityVenueMap } from '../../db/activityVenueMap';
-
-// Import xAI agent executor
-import { executeAgent } from './agentExecutor';
-import { validateEventLink, classifyEventCategory, extractMovieInformation, extractGokartingInformation } from './helpers';
-import { getEventCategoryConfig, hasSpecializedAgent } from '../utils/eventCategoryConfig';
-import { getXaiEventCategoryConfig, hasXaiSpecializedAgent } from './eventCategoryConfig';
-
-// Import xAI similarity matchers
+import type { Provider } from '../utils/providerSelection';
+import type { EventCategory } from '../utils/schemas';
+import type { Locality, CityRegion, Venue } from '../../types/database';
+import type { LocalityRow, VenueRow } from '../utils/schemas';
+import { SimilarityMatcher } from '../utils/dbOperations';
 import {
   findClosestLocalityMatch,
   findClosestCityRegionMatch,
   findClosestVenueMatch
-} from './similarityAgent';
-import { SimilarityMatcher } from '../utils/dbOperations';
-import type { Locality, CityRegion, Venue } from '../../types/database';
-import type { LocalityRow, VenueRow, CityRegionRow, ActivityVenueMapRow, ActivityRow, CityRow } from '../utils/schemas';
-import type { EventCategory } from '../utils/schemas';
-import type { UrlProcessingResult } from '../workflows';
+} from '../utils/similarity';
 
-/**
- * Create similarity matcher wrappers for xAI agents
- */
-const localitySimilarityMatcher: SimilarityMatcher<LocalityRow, Locality> = {
-  async findClosestMatch(newLocality, existingLocalities, options) {
-    const result = await findClosestLocalityMatch(
-      {
-        new_locality: {
-          name: newLocality.name,
-          address: newLocality.address,
-          latitude: newLocality.latitude,
-          longitude: newLocality.longitude,
-          pincode: newLocality.pincode
-        },
-        existing_localities: existingLocalities.map(loc => ({
-          locality_id: loc.locality_id,
-          name: loc.name,
-          address: loc.address,
-          latitude: loc.latitude,
-          longitude: loc.longitude,
-          pincode: loc.pincode
-        }))
-      },
-      options?.enableLogging || false
-    );
-    return result;
-  }
-};
-
-const cityRegionSimilarityMatcher: SimilarityMatcher<{ name: string; city_id: number }, CityRegion> = {
-  async findClosestMatch(newCityRegion, existingCityRegions, options) {
-    const result = await findClosestCityRegionMatch(
-      {
-        new_city_region: {
-          name: newCityRegion.name,
-          city_id: newCityRegion.city_id
-        },
-        existing_city_regions: existingCityRegions.map(cr => ({
-          city_region_id: cr.city_region_id,
-          name: cr.name,
-          city_id: cr.city_id
-        }))
-      },
-      options?.enableLogging || false
-    );
-    return result;
-  }
-};
-
-const venueSimilarityMatcher: SimilarityMatcher<VenueRow & { locality_id: number }, Venue> = {
-  async findClosestMatch(newVenue, existingVenues, options) {
-    const result = await findClosestVenueMatch(
-      {
-        new_venue: {
-          name: newVenue.name,
-          address: newVenue.address,
-          latitude: newVenue.latitude,
-          longitude: newVenue.longitude,
-          locality_id: newVenue.locality_id
-        },
-        existing_venues: existingVenues.map(ven => ({
-          venue_id: ven.venue_id,
-          name: ven.name,
-          address: ven.address,
-          latitude: ven.latitude,
-          longitude: ven.longitude,
-          locality_id: ven.locality_id
-        }))
-      },
-      options?.enableLogging || false
-    );
-    return result;
-  }
-};
-
-// Re-export UrlProcessingResult from workflows for backward compatibility
-export type { UrlProcessingResult } from '../workflows';
-
-/**
- * Run the complete URL processing pipeline using xAI agents
- * This processes a URL through all agents sequentially to create database entities
- * 
- * This is a wrapper around the provider-agnostic workflow for backward compatibility.
- */
-export async function runUrlProcessingPipeline(
-  url: string,
-  options: {
-    enableLogging?: boolean;
-    enableTracing?: boolean;
-    maxRetries?: number;
-  } = {}
-): Promise<UrlProcessingResult> {
-  // Route to provider-agnostic workflow
-  const { runUrlProcessingPipeline: runWorkflow } = await import('../workflows');
-  return runWorkflow(url, 'xai', options);
+// Pipeline result interface
+export interface UrlProcessingResult {
+  success: boolean;
+  city_id?: number;
+  city_region_id?: number;
+  locality_id?: number;
+  venue_id?: number;
+  activity_id?: number;
+  activity_venue_map_id?: number;
+  created_new_city?: boolean;
+  created_new_city_region?: boolean;
+  created_new_locality?: boolean;
+  created_new_venue?: boolean;
+  created_new_activity?: boolean;
+  error?: Error;
+  executionTime: number;
+  is_event_link?: boolean;
+  event_category?: EventCategory;
+  category_confidence?: number;
+  specialized_extraction?: any;
 }
 
 /**
- * Legacy implementation - kept for reference but not used
- * The actual implementation now routes to the provider-agnostic workflow above
+ * Get provider-specific agent executor
  */
-async function _legacyImplementation(
+async function getAgentExecutor(provider: Provider) {
+  if (provider === 'xai') {
+    const { executeAgent } = await import('../xai/agentExecutor');
+    return executeAgent;
+  } else {
+    const { executeAgent } = await import('../openai/agentExecutor');
+    return executeAgent;
+  }
+}
+
+/**
+ * Get provider-specific helper functions
+ */
+async function getProviderHelpers(provider: Provider) {
+  if (provider === 'xai') {
+    const helpers = await import('../xai/helpers');
+    return {
+      validateEventLink: helpers.validateEventLink,
+      classifyEventCategory: helpers.classifyEventCategory,
+      extractMovieInformation: helpers.extractMovieInformation,
+      extractGokartingInformation: helpers.extractGokartingInformation
+    };
+  } else {
+    const helpers = await import('../openai/helpers');
+    return {
+      validateEventLink: helpers.validateEventLink,
+      classifyEventCategory: helpers.classifyEventCategory,
+      extractMovieInformation: helpers.extractMovieInformation,
+      extractGokartingInformation: helpers.extractGokartingInformation
+    };
+  }
+}
+
+/**
+ * Get specialized extraction function for a category
+ */
+async function getSpecializedExtraction(
+  category: EventCategory,
+  provider: Provider
+): Promise<((input: { url: string }, options?: { enableLogging?: boolean }) => Promise<any>) | null> {
+  const helpers = await getProviderHelpers(provider);
+  
+  if (category === 'movie') {
+    return helpers.extractMovieInformation;
+  } else if (category === 'gokarting') {
+    return helpers.extractGokartingInformation;
+  }
+  
+  return null;
+}
+
+/**
+ * Run the complete URL processing pipeline
+ */
+export async function runUrlProcessingPipeline(
   url: string,
+  provider: Provider,
   options: {
     enableLogging?: boolean;
     enableTracing?: boolean;
@@ -168,22 +138,27 @@ async function _legacyImplementation(
   const startTime = Date.now();
   const { enableLogging = true, enableTracing = true, maxRetries = 2 } = options;
 
-  logger.info(`Starting xAI URL processing pipeline`, {
+  logger.info(`Starting URL processing pipeline`, {
     url,
+    provider,
     options: { enableLogging, enableTracing, maxRetries }
   });
 
   try {
+    const executeAgent = await getAgentExecutor(provider);
+    const helpers = await getProviderHelpers(provider);
+
     // Step 0: Validate if URL is an event link
     if (enableLogging) {
-      logger.info('Validating event link', { url });
+      logger.info('Validating event link', { url, provider });
     }
-    const validationResult = await validateEventLink({ url }, { enableLogging });
+    const validationResult = await helpers.validateEventLink({ url }, { enableLogging });
     
     if (!validationResult.is_event_link) {
       const executionTime = Date.now() - startTime;
       logger.info('URL is not an event link, skipping processing', {
         url,
+        provider,
         confidence: validationResult.confidence,
         reasoning: validationResult.reasoning
       });
@@ -198,21 +173,22 @@ async function _legacyImplementation(
     if (enableLogging) {
       logger.info('Event link validated', {
         url,
+        provider,
         is_event_link: validationResult.is_event_link,
-        confidence: validationResult.confidence,
-        event_type_hint: validationResult.event_type_hint
+        confidence: validationResult.confidence
       });
     }
 
     // Step 0.5: Classify event category
     if (enableLogging) {
-      logger.info('Classifying event category', { url });
+      logger.info('Classifying event category', { url, provider });
     }
-    const categoryResult = await classifyEventCategory({ url }, { enableLogging });
+    const categoryResult = await helpers.classifyEventCategory({ url }, { enableLogging });
     
     if (enableLogging) {
       logger.info('Event category classified', {
         url,
+        provider,
         category: categoryResult.category,
         confidence: categoryResult.confidence,
         subcategory: categoryResult.subcategory
@@ -236,17 +212,18 @@ async function _legacyImplementation(
 
       let specializedExtraction: any = undefined;
 
-      // Step 0.6: Run specialized agent based on category (if available for xAI)
-      const xaiCategoryConfig = getXaiEventCategoryConfig(categoryResult.category);
-      if (hasXaiSpecializedAgent(categoryResult.category) && xaiCategoryConfig?.specializedAgent) {
+      // Step 0.6: Run specialized agent based on category (if available)
+      const specializedExtractionFn = await getSpecializedExtraction(categoryResult.category, provider);
+      if (specializedExtractionFn) {
         if (enableLogging) {
-          logger.info(`Running xAI specialized agent for category: ${categoryResult.category}`, { url });
+          logger.info(`Running specialized agent for category: ${categoryResult.category}`, { url, provider });
         }
         try {
-          specializedExtraction = await xaiCategoryConfig.specializedAgent({ url }, { enableLogging });
+          specializedExtraction = await specializedExtractionFn({ url }, { enableLogging });
           if (enableLogging) {
             logger.info(`Specialized extraction completed for ${categoryResult.category}`, {
               category: categoryResult.category,
+              provider,
               hasExtraction: !!specializedExtraction
             });
           }
@@ -256,22 +233,89 @@ async function _legacyImplementation(
         }
       } else {
         if (enableLogging) {
-          logger.info(`No xAI specialized agent available for category: ${categoryResult.category}, using standard pipeline`, { url });
+          logger.info(`No specialized agent available for category: ${categoryResult.category}, using standard pipeline`, { url, provider });
         }
       }
 
+      // Create similarity matchers for this provider
+      const localitySimilarityMatcher: SimilarityMatcher<LocalityRow, Locality> = {
+        async findClosestMatch(newLocality, existingLocalities, options) {
+          const result = await findClosestLocalityMatch(
+            {
+              new_locality: {
+                name: newLocality.name,
+                address: newLocality.address,
+                latitude: newLocality.latitude,
+                longitude: newLocality.longitude,
+                pincode: newLocality.pincode
+              },
+              existing_localities: existingLocalities.map(loc => ({
+                locality_id: loc.locality_id,
+                name: loc.name,
+                address: loc.address,
+                latitude: loc.latitude,
+                longitude: loc.longitude,
+                pincode: loc.pincode
+              }))
+            },
+            provider,
+            { enableLogging: options?.enableLogging || false }
+          );
+          return result;
+        }
+      };
+
+      const cityRegionSimilarityMatcher: SimilarityMatcher<{ name: string; city_id: number }, CityRegion> = {
+        async findClosestMatch(newCityRegion, existingCityRegions, options) {
+          const result = await findClosestCityRegionMatch(
+            {
+              new_city_region: {
+                name: newCityRegion.name,
+                city_id: newCityRegion.city_id
+              },
+              existing_city_regions: existingCityRegions.map(cr => ({
+                city_region_id: cr.city_region_id,
+                name: cr.name,
+                city_id: cr.city_id
+              }))
+            },
+            provider,
+            { enableLogging: options?.enableLogging || false }
+          );
+          return result;
+        }
+      };
+
+      const venueSimilarityMatcher: SimilarityMatcher<VenueRow & { locality_id: number }, Venue> = {
+        async findClosestMatch(newVenue, existingVenues, options) {
+          const result = await findClosestVenueMatch(
+            {
+              new_venue: {
+                name: newVenue.name,
+                address: newVenue.address,
+                latitude: newVenue.latitude,
+                longitude: newVenue.longitude,
+                locality_id: newVenue.locality_id
+              },
+              existing_venues: existingVenues.map(ven => ({
+                venue_id: ven.venue_id,
+                name: ven.name,
+                address: ven.address,
+                latitude: ven.latitude,
+                longitude: ven.longitude,
+                locality_id: ven.locality_id
+              }))
+            },
+            provider,
+            { enableLogging: options?.enableLogging || false }
+          );
+          return result;
+        }
+      };
+
       // Step 1: Extract and save city
-      // #region debug log
-      try{require('fs').appendFileSync('/home/ubuntu/whatsapp-bot/.cursor/debug.log',JSON.stringify({location:'xai/index.ts:93',message:'Starting city extraction',data:{url},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix'})+'\n');}catch(e){}
-      // #endregion
-      const cityResult = await executeAgent<{ url: string }, CityRow>('city', { url }, { enableLogging });
-      // #region debug log
-      try{require('fs').appendFileSync('/home/ubuntu/whatsapp-bot/.cursor/debug.log',JSON.stringify({location:'xai/index.ts:96',message:'City extraction result',data:{success:cityResult.success,hasData:!!cityResult.data,hasError:!!cityResult.error,dataKeys:cityResult.data?Object.keys(cityResult.data):[]},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix'})+'\n');}catch(e){}
-      // #endregion
+      const cityResult = await executeAgent('city', { url }, { enableLogging });
       if (!cityResult.success || !cityResult.data) {
-        // #region debug log
-        try{require('fs').appendFileSync('/home/ubuntu/whatsapp-bot/.cursor/debug.log',JSON.stringify({location:'xai/index.ts:99',message:'City extraction failed',data:{success:cityResult.success,hasData:!!cityResult.data,error:cityResult.error?.message},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix'})+'\n');}catch(e){}
-        // #endregion
         throw cityResult.error || new Error('City extraction failed');
       }
 
@@ -287,7 +331,7 @@ async function _legacyImplementation(
       createdNewCity = cityDbResult.created;
 
       // Step 2: Extract and save city region
-      const cityRegionResult = await executeAgent<{ url: string; city_id: number; city_name: string }, CityRegionRow>('city-region', {
+      const cityRegionResult = await executeAgent('city-region', {
         url,
         city_id: cityId,
         city_name: cityResult.data.name
@@ -300,8 +344,8 @@ async function _legacyImplementation(
       // Find or create city region with similarity matching
       const cityRegionDbResult = await findOrCreateWithSimilarity(
         { name: cityRegionResult.data.name, city_id: cityId },
-        (cr) => Promise.resolve(null), // No direct lookup for city regions
-        () => getAllCityRegions(), // Query all city regions for similarity matching (not just by city)
+        (cr) => Promise.resolve(null),
+        (client?: PoolClient) => getAllCityRegions(client),
         cityRegionSimilarityMatcher,
         (cr) => createCityRegion({ city_id: cr.city_id, name: cr.name }, client),
         (cr) => cr.city_region_id,
@@ -311,7 +355,7 @@ async function _legacyImplementation(
       createdNewCityRegion = cityRegionDbResult.created;
 
       // Step 3: Extract and save locality
-      const localityResult = await executeAgent<{ url: string; city_region_id: number; city_region_name: string }, LocalityRow>('locality', {
+      const localityResult = await executeAgent('locality', {
         url,
         city_region_id: cityRegionId,
         city_region_name: cityRegionResult.data.name
@@ -324,8 +368,8 @@ async function _legacyImplementation(
       // Find or create locality with similarity matching
       const localityDbResult = await findOrCreateWithSimilarity(
         localityResult.data,
-        (loc) => Promise.resolve(null), // No direct lookup
-        () => getAllLocalities(), // Query all localities for similarity matching (not just by city region)
+        (loc) => Promise.resolve(null),
+        (client?: PoolClient) => getAllLocalities(client),
         localitySimilarityMatcher,
         (loc) => createLocality({
           name: loc.name,
@@ -342,7 +386,7 @@ async function _legacyImplementation(
       createdNewLocality = localityDbResult.created;
 
       // Step 4: Extract and save venue
-      const venueResult = await executeAgent<{ url: string; locality_id: number; locality_name: string }, VenueRow>('venue', {
+      const venueResult = await executeAgent('venue', {
         url,
         locality_id: localityId,
         locality_name: localityResult.data.name
@@ -353,15 +397,14 @@ async function _legacyImplementation(
       }
 
       // Find or create venue with similarity matching
-      // Create venue data with locality_id for similarity matching
       const venueDataForMatching: VenueRow & { locality_id: number } = {
         ...venueResult.data,
         locality_id: localityId!
       };
       const venueDbResult = await findOrCreateWithSimilarity(
         venueDataForMatching,
-        (ven: VenueRow & { locality_id: number }) => Promise.resolve(null), // No direct lookup
-        () => getAllVenues(), // Query all venues for similarity matching (not just by locality)
+        (ven: VenueRow & { locality_id: number }) => Promise.resolve(null),
+        (client?: PoolClient) => getAllVenues(client),
         venueSimilarityMatcher,
         (ven: VenueRow & { locality_id: number }) => createVenue({
           name: ven.name,
@@ -387,7 +430,7 @@ async function _legacyImplementation(
       createdNewVenue = venueDbResult.created;
 
       // Step 5: Extract and save activity
-      const activityResult = await executeAgent<{ url: string }, ActivityRow>('activity', { url }, { enableLogging });
+      const activityResult = await executeAgent('activity', { url }, { enableLogging });
 
       if (!activityResult.success || !activityResult.data) {
         throw activityResult.error || new Error('Activity extraction failed');
@@ -399,7 +442,6 @@ async function _legacyImplementation(
         activityId = existingActivities[0].activity_id;
         createdNewActivity = false;
       } else {
-        // Get max activity_id to create new one
         const allActivities = await getAllActivities();
         const maxActivityId = allActivities.length > 0 
           ? Math.max(...allActivities.map(a => a.activity_id)) 
@@ -415,7 +457,7 @@ async function _legacyImplementation(
       }
 
       // Step 6: Extract and save activity venue map
-      const avmResult = await executeAgent<{ url: string; activity_id: number; activity_name: string; venue_id: number; venue_name: string }, ActivityVenueMapRow>('activity-venue-map', {
+      const avmResult = await executeAgent('activity-venue-map', {
         url,
         activity_id: activityId,
         activity_name: activityResult.data.name,
@@ -450,12 +492,9 @@ async function _legacyImplementation(
 
       const executionTime = Date.now() - startTime;
 
-      // #region debug log
-      try{require('fs').appendFileSync('/home/ubuntu/whatsapp-bot/.cursor/debug.log',JSON.stringify({location:'xai/index.ts:250',message:'All database operations completed',data:{executionTime,cityId,cityRegionId,localityId,venueId,activityId,activityVenueMapId,createdNewCity,createdNewCityRegion,createdNewLocality,createdNewVenue,createdNewActivity},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix'})+'\n');}catch(e){}
-      // #endregion
-
-      logger.info(`xAI URL processing completed successfully`, {
+      logger.info(`URL processing completed successfully`, {
         url,
+        provider,
         executionTime: `${executionTime}ms`,
         cityId,
         cityRegionId,
@@ -488,73 +527,18 @@ async function _legacyImplementation(
 
   } catch (error: any) {
     const executionTime = Date.now() - startTime;
-    // #region debug log
-    try{require('fs').appendFileSync('/home/ubuntu/whatsapp-bot/.cursor/debug.log',JSON.stringify({location:'xai/index.ts:156',message:'Pipeline error caught',data:{errorName:error?.name,errorMessage:error?.message,errorStack:error?.stack?.substring(0,500)},timestamp:Date.now(),sessionId:'debug-session',runId:'post-fix'})+'\n');}catch(e){}
-    // #endregion
     const agentError = classifyError(error);
 
-    logger.error(`xAI URL processing pipeline failed with exception`, agentError, {
+    logger.error(`URL processing pipeline failed`, agentError, {
       url,
+      provider,
       executionTime: `${executionTime}ms`
     });
 
     return {
       success: false,
-      error: agentError,
+      error: agentError.originalError || agentError,
       executionTime
     };
   }
 }
-
-/**
- * Run URL processing with database transaction wrapping
- * This ensures all database operations are atomic
- */
-export async function runUrlProcessingPipelineWithTransaction(
-  url: string,
-  options: {
-    enableLogging?: boolean;
-    enableTracing?: boolean;
-    maxRetries?: number;
-  } = {}
-): Promise<UrlProcessingResult> {
-  return await logger.trace('URL Processing Pipeline with Transaction', async () => {
-    // For now, just call the regular pipeline
-    // In the future, we could wrap this in a transaction if needed
-    return runUrlProcessingPipeline(url, options);
-  });
-}
-
-// Export agent executor and convenience functions
-export {
-  executeAgent,
-  executeCityAgent,
-  executeCityRegionAgent,
-  executeLocalityAgent,
-  executeVenueAgent,
-  executeActivityAgent,
-  executeActivityVenueMapAgent,
-  executeEventLinkValidatorAgent,
-  executeEventCategoryClassifierAgent,
-  executeMovieAgent,
-  executeGokartingAgent
-} from './agentExecutor';
-
-// Export helper functions
-export {
-  validateEventLink,
-  classifyEventCategory,
-  extractMovieInformation,
-  extractGokartingInformation
-} from './helpers';
-
-// Re-export common types and constants
-export { EVENT_CATEGORIES } from '../utils/schemas';
-export type { EventCategory, EventCategoryClassificationResult, EventLinkValidationResult, MovieExtractionResult, GokartingExtractionResult } from '../utils/schemas';
-
-// Export similarity matchers (wrapped for dbOperations compatibility)
-export {
-  localitySimilarityMatcher,
-  cityRegionSimilarityMatcher,
-  venueSimilarityMatcher
-};

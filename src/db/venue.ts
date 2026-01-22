@@ -17,16 +17,18 @@ export async function getVenueById(venueId: number): Promise<Venue | null> {
 /**
  * Get all venues
  */
-export async function getAllVenues(): Promise<Venue[]> {
-  const result = await query('SELECT * FROM public.venue ORDER BY name');
+export async function getAllVenues(client?: PoolClient): Promise<Venue[]> {
+  const queryFn = client ? client.query.bind(client) : query;
+  const result = await queryFn('SELECT * FROM public.venue ORDER BY name');
   return result.rows;
 }
 
 /**
  * Get venues by locality_id
  */
-export async function getVenuesByLocalityId(localityId: number): Promise<Venue[]> {
-  const result = await query(
+export async function getVenuesByLocalityId(localityId: number, client?: PoolClient): Promise<Venue[]> {
+  const queryFn = client ? client.query.bind(client) : query;
+  const result = await queryFn(
     'SELECT * FROM public.venue WHERE locality_id = $1 ORDER BY name',
     [localityId]
   );

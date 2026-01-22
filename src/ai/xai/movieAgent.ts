@@ -2,48 +2,13 @@
  * xAI Movie Agent
  * 
  * Specialized agent for extracting movie times and listings from theatre pages.
- * This agent is specifically designed to handle movie theatre websites and extract:
- * - Movie titles and showtimes
- * - Theatre information
- * - Pricing information
- * - Booking links
- * - Available dates and time slots
+ * Uses common schemas and prompts from utils.
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { z } from 'zod';
+import { MovieExtractionSchema, type MovieExtractionResult } from '../utils/schemas';
+import { getMovieExtractionPrompt, getMovieExtractionUserMessage } from '../utils/extractionPrompts';
 import { logger } from '../utils/logging';
-
-// Schema for movie extraction result
-const MovieExtractionSchema = z.object({
-  movie_title: z.string().min(1),
-  theatre_name: z.string().min(1),
-  showtimes: z.array(z.object({
-    date: z.string().date(),
-    time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/), // HH:MM format
-    format: z.string().nullable().optional(), // e.g., "2D", "3D", "IMAX", "Dolby"
-    language: z.string().nullable().optional(), // e.g., "English", "Hindi"
-    screen_number: z.string().nullable().optional()
-  })),
-  pricing: z.object({
-    base_price: z.number().nullable().optional(),
-    currency: z.string().default('INR'),
-    price_ranges: z.array(z.object({
-      seat_type: z.string().nullable().optional(), // e.g., "Standard", "Premium", "VIP"
-      price: z.number()
-    })).optional()
-  }),
-  booking_link: z.string().min(1),
-  available_dates: z.array(z.string().date()),
-  venue_address: z.string().nullable().optional(),
-  venue_location: z.object({
-    latitude: z.number().nullable().optional(),
-    longitude: z.number().nullable().optional()
-  }).optional(),
-  research_notes: z.string().min(1)
-});
-
-export type MovieExtractionResult = z.infer<typeof MovieExtractionSchema>;
 
 export interface MovieAgentInput {
   url: string;

@@ -17,8 +17,9 @@ export async function getLocalityById(localityId: number): Promise<Locality | nu
 /**
  * Get all localities
  */
-export async function getAllLocalities(): Promise<Locality[]> {
-  const result = await query('SELECT * FROM public.locality ORDER BY name');
+export async function getAllLocalities(client?: PoolClient): Promise<Locality[]> {
+  const queryFn = client ? client.query.bind(client) : query;
+  const result = await queryFn('SELECT * FROM public.locality ORDER BY name');
   return result.rows;
 }
 

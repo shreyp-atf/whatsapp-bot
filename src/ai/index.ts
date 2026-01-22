@@ -214,34 +214,99 @@ export type { ConversationAgentConfig, ConversationMessage } from './openai/conv
 export { ExtractionAgent, extractionAgent } from './openai/extractionAgent';
 export type { ExtractionAgentConfig } from './openai/extractionAgent';
 
-// Export xAI agents and pipeline
+// Export provider-agnostic workflows
 export {
-  runUrlProcessingPipeline,
+  runUrlProcessingPipeline as runUrlProcessingPipelineWorkflow
+} from './workflows';
+export type {
+  UrlProcessingResult
+} from './workflows';
+
+// Export provider selection utilities
+export {
+  executeWithProviderFallback,
+  validateProviderEnvVars
+} from './utils/providerSelection';
+export type {
+  Provider,
+  ProviderConfig
+} from './utils/providerSelection';
+
+// Export xAI agents and pipeline (backward compatibility)
+export {
+  runUrlProcessingPipeline as runXaiUrlProcessingPipeline,
   runUrlProcessingPipelineWithTransaction,
-  xaiCityAgent,
-  xaiCityRegionAgent,
-  xaiLocalityAgent,
-  xaiVenueAgent,
-  xaiActivityAgent,
-  xaiActivityVenueMapAgent,
-  xaiEventLinkValidatorAgent,
-  xaiEventCategoryClassifierAgent,
-  xaiMovieAgent,
-  xaiGokartingAgent,
-  validateEventLink,
-  classifyEventCategory,
-  extractMovieInformation,
-  extractGokartingInformation,
+  executeAgent as executeXaiAgent,
+  executeCityAgent,
+  executeCityRegionAgent,
+  executeLocalityAgent,
+  executeVenueAgent,
+  executeActivityAgent,
+  executeActivityVenueMapAgent,
+  executeEventLinkValidatorAgent,
+  executeEventCategoryClassifierAgent,
+  executeMovieAgent,
+  executeGokartingAgent,
+  validateEventLink as validateEventLinkXai,
+  classifyEventCategory as classifyEventCategoryXai,
+  extractMovieInformation as extractMovieInformationXai,
+  extractGokartingInformation as extractGokartingInformationXai,
   EVENT_CATEGORIES
 } from './xai/index';
 export type { 
-  UrlProcessingResult,
+  UrlProcessingResult as XaiUrlProcessingResult,
   EventCategory,
   EventCategoryClassificationResult,
   EventLinkValidationResult,
   MovieExtractionResult,
   GokartingExtractionResult
 } from './xai/index';
+
+// Export OpenAI agent executor
+export {
+  executeAgent as executeOpenAiAgent,
+  executeCityAgent as executeOpenAiCityAgent,
+  executeCityRegionAgent as executeOpenAiCityRegionAgent,
+  executeLocalityAgent as executeOpenAiLocalityAgent,
+  executeVenueAgent as executeOpenAiVenueAgent,
+  executeActivityAgent as executeOpenAiActivityAgent,
+  executeActivityVenueMapAgent as executeOpenAiActivityVenueMapAgent,
+  executeEventLinkValidatorAgent as executeOpenAiEventLinkValidatorAgent,
+  executeEventCategoryClassifierAgent as executeOpenAiEventCategoryClassifierAgent,
+  executeMovieAgent as executeOpenAiMovieAgent,
+  executeGokartingAgent as executeOpenAiGokartingAgent
+} from './openai/agentExecutor';
+
+// Export OpenAI helpers
+export {
+  validateEventLink as validateEventLinkOpenAi,
+  classifyEventCategory as classifyEventCategoryOpenAi,
+  extractMovieInformation as extractMovieInformationOpenAi,
+  extractGokartingInformation as extractGokartingInformationOpenAi
+} from './openai/helpers';
+
+// Export OpenAI pipeline (backward compatibility)
+export {
+  runUrlProcessingPipeline as runOpenAiUrlProcessingPipeline
+} from './openai/index';
+
+// Export agent definitions (common utils)
+export {
+  AGENT_REGISTRY,
+  getAgentDefinition,
+  getAllAgentDefinitions,
+  cityAgentDefinition,
+  cityRegionAgentDefinition,
+  localityAgentDefinition,
+  venueAgentDefinition,
+  activityAgentDefinition,
+  activityVenueMapAgentDefinition,
+  eventLinkValidatorAgentDefinition,
+  eventCategoryClassifierAgentDefinition,
+  movieAgentDefinition,
+  gokartingAgentDefinition
+} from './utils/agents';
+export type { AgentDefinition, AgentId } from './utils/agents';
 
 // Export event category configuration (common utils)
 export {
@@ -267,3 +332,15 @@ export * from './utils/logging';
 export * from './utils/dbOperations';
 export * from './utils/pipeline';
 export * from './utils/transactionWrapper';
+export * from './utils/similarity';
+
+// Export multi-agent conversation system
+export {
+  processMessage,
+  extractPersona,
+  executeMasterAgent,
+  executeOnboardingAgent,
+  executePlanningAgent,
+  executeOutOfScopeAgent,
+  executePersonaExtractionAgent
+} from './openai/conversation';

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "name",
+    "question": "What's your name?",
+    "field": "name",
+    "order": 1,
+    "required": true,
+    "validation": "non-empty"
+  },
+  {
+    "id": "location",
+    "question": "Which city are you in?",
+    "field": "locality_id",
+    "order": 2,
+    "required": true,
+    "validation": "locality-lookup"
+  },
+  {
+    "id": "preferences",
+    "question": "What kind of activities do you enjoy? (e.g., movies, restaurants, events, sports)",
+    "field": "preferences",
+    "order": 3,
+    "required": false,
+    "validation": "optional"
+  }
+]
