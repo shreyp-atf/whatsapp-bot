@@ -204,12 +204,66 @@ export const aiClient = new Proxy({} as AIClient, {
 });
 
 // Export optimizer
-export { optimizePlansForUser } from './optimizer';
+export { optimizePlansForUser } from './openai/optimizer';
 
 // Export conversation agent
-export { ConversationAgent, conversationAgent } from './conversationAgent';
-export type { ConversationAgentConfig, ConversationMessage } from './conversationAgent';
+export { ConversationAgent, conversationAgent } from './openai/conversationAgent';
+export type { ConversationAgentConfig, ConversationMessage } from './openai/conversationAgent';
 
 // Export extraction agent
-export { ExtractionAgent, extractionAgent } from './extractionAgent';
-export type { ExtractionAgentConfig } from './extractionAgent';
+export { ExtractionAgent, extractionAgent } from './openai/extractionAgent';
+export type { ExtractionAgentConfig } from './openai/extractionAgent';
+
+// Export xAI agents and pipeline
+export {
+  runUrlProcessingPipeline,
+  runUrlProcessingPipelineWithTransaction,
+  xaiCityAgent,
+  xaiCityRegionAgent,
+  xaiLocalityAgent,
+  xaiVenueAgent,
+  xaiActivityAgent,
+  xaiActivityVenueMapAgent,
+  xaiEventLinkValidatorAgent,
+  xaiEventCategoryClassifierAgent,
+  xaiMovieAgent,
+  xaiGokartingAgent,
+  validateEventLink,
+  classifyEventCategory,
+  extractMovieInformation,
+  extractGokartingInformation,
+  EVENT_CATEGORIES
+} from './xai/index';
+export type { 
+  UrlProcessingResult,
+  EventCategory,
+  EventCategoryClassificationResult,
+  EventLinkValidationResult,
+  MovieExtractionResult,
+  GokartingExtractionResult
+} from './xai/index';
+
+// Export event category configuration (common utils)
+export {
+  EVENT_CATEGORY_CONFIGS,
+  getEventCategoryConfig,
+  getCategoriesWithSpecializedAgents,
+  hasSpecializedAgent
+} from './utils/eventCategoryConfig';
+export type { EventCategoryConfig } from './utils/eventCategoryConfig';
+
+// Export xAI similarity matchers
+export {
+  xaiLocalitySimilarityMatcher,
+  xaiCityRegionSimilarityMatcher,
+  xaiVenueSimilarityMatcher
+} from './xai/similarityAgent';
+
+// Export shared utilities
+export * from './utils/schemas';
+export * from './utils/agentInterface';
+export * from './utils/errorHandling';
+export * from './utils/logging';
+export * from './utils/dbOperations';
+export * from './utils/pipeline';
+export * from './utils/transactionWrapper';

@@ -132,6 +132,7 @@ export async function getPlanView(planId: string): Promise<PlanView | null> {
       close_time: row.venue_close_time,
       updated_at: row.venue_updated_at,
       locality_id: row.venue_locality_id,
+      type: row.venue_type || 'venue',
     };
     
     return {

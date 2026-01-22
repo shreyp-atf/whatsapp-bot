@@ -6,7 +6,6 @@
  */
 
 import { webSearchTool, Agent, AgentInputItem, Runner, withTrace } from "@openai/agents";
-import { z } from "zod";
 import dotenv from 'dotenv';
 import {
   findClosestLocalityMatch,
@@ -16,13 +15,21 @@ import {
   type CityRegionSimilarityInput,
   type VenueSimilarityInput
 } from './similarityAgent';
-import { getAllLocalities } from '../db/locality';
-import { getAllCityRegions } from '../db/cityRegion';
-import { getAllVenues } from '../db/venue';
-import { getAllCities, getCityByNameAndCountry, createCity } from '../db/city';
-import { createLocality } from '../db/locality';
-import { createCityRegion } from '../db/cityRegion';
-import { createVenue } from '../db/venue';
+import {
+  VenueLocalityAgentSchema,
+  type VenueLocalityAgentOutput
+} from '../utils/schemas';
+import {
+  getVenueExtractionPrompt,
+  getVenueExtractionUserMessage
+} from '../utils/extractionPrompts';
+import { getAllLocalities } from '../../db/locality';
+import { getAllCityRegions } from '../../db/cityRegion';
+import { getAllVenues } from '../../db/venue';
+import { getAllCities, getCityByNameAndCountry, createCity } from '../../db/city';
+import { createLocality } from '../../db/locality';
+import { createCityRegion } from '../../db/cityRegion';
+import { createVenue } from '../../db/venue';
 import { PoolClient } from 'pg';
 
 dotenv.config();
@@ -38,101 +45,12 @@ const webSearchPreview = webSearchTool({
   }
 });
 
-// Schema for venue row generation
-const VenueRowSchema = z.object({
-  name: z.string().min(1),
-  latitude: z.number(),
-  longitude: z.number(),
-  google_maps_location: z.string().min(1),
-  directions_to_reach: z.string().nullable(),
-  address: z.string().min(1),
-  is_public: z.boolean().default(false),
-  is_active: z.boolean().default(false),
-  is_verified: z.boolean().default(false),
-  is_approved: z.boolean().default(false),
-  price_point: z.number().min(1).max(5).nullable(),
-  open_time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
-  close_time: z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/),
-  type: z.string().min(1),
-  booking_link: z.string().nullable(),
-  notes: z.string().nullable(),
-  research_notes: z.string().min(1)
-});
-
-// Schema for locality row generation
-const LocalityRowSchema = z.object({
-  name: z.string().min(1),
-  pincode: z.string().min(1),
-  address: z.string().min(1),
-  latitude: z.number(),
-  longitude: z.number(),
-  city_name: z.string().min(1),
-  city_region_name: z.string().min(1),
-  research_notes: z.string().min(1)
-});
-
-// Schema for city region row generation
-const CityRegionRowSchema = z.object({
-  name: z.string().min(1),
-  city_name: z.string().min(1),
-  research_notes: z.string().min(1)
-});
-
-// Main output schema combining venue, locality, and city region data
-const VenueLocalityAgentSchema = z.object({
-  venue_row: VenueRowSchema,
-  locality_row: LocalityRowSchema,
-  city_region_row: CityRegionRowSchema
-});
+// All schemas are now imported from utils/schemas.ts
 
 // Create the venue agent with web search capabilities
 const venueLocalityAgent = new Agent({
   name: "Venue Locality Generator Agent",
-  instructions: `You are a specialized agent that generates complete venue, locality, and city region database rows based on venue input data.
-
-IMPORTANT: When input fields are provided (booking_link, details/notes, locality), you MUST use them exactly as provided. When fields are NOT provided or are null/empty, you MUST research and determine them yourself.
-
-Your task is to:
-1. Research the venue using web search to find accurate details (for any missing information)
-2. Generate city region information (e.g., "Delhi NCR", "Mumbai Metropolitan")
-3. Generate locality information (neighborhood/area within the city region)
-4. Generate venue details with ALL required fields
-
-For the city region row, you need to:
-- Determine the city region name based on the venue location
-- Identify the main city (e.g., "Delhi" for "Delhi NCR", "Mumbai" for "Mumbai Metropolitan")
-- Include research notes explaining your sources and reasoning
-
-For the locality row, you need to:
-- Use the provided locality name if given, otherwise extract or infer it from research
-- Find the pincode for the area
-- Get the address of the locality/area
-- Determine latitude/longitude coordinates for the locality
-- Identify the city region it belongs to
-- Include research notes explaining your sources and reasoning
-
-For the venue row, you need to:
-- Use the provided venue name
-- Find accurate latitude/longitude coordinates
-- Generate or find a Google Maps location URL
-- Get detailed address information
-- Determine the venue type (e.g., "restaurant", "cafe", "bar", "theater", "stadium", "park", "mall", "hotel", "museum", "gallery", "club", "venue", "hall", "arena", "auditorium", etc.) - this is REQUIRED
-- Set default boolean flags (is_public=false, is_active=false, is_verified=false, is_approved=false)
-- Determine price point (1-5 scale, where 1 is budget and 5 is luxury, null if unknown)
-- Find typical operating hours (open_time and close_time in HH:MM format)
-- booking_link: Use the provided booking_link if available, otherwise research and find one, or set to null if none exists
-- notes: Use the provided details/notes if available, otherwise research and generate appropriate notes, or set to null
-- Include research notes explaining your sources and reasoning
-
-Use the websearchpreview tool to:
-- Search for venue details, reviews, and official websites
-- Find coordinates and maps information
-- Research locality information and boundaries
-- Get accurate address and operating hours
-- Cross-reference information from multiple sources
-- Find booking links and additional details when not provided
-
-CRITICAL: All fields in the venue_row schema must be populated. Use provided values when available, research when not.`,
+  instructions: getVenueExtractionPrompt(),
   model: "gpt-5-nano",
   tools: [
     webSearchPreview
@@ -146,15 +64,12 @@ CRITICAL: All fields in the venue_row schema must be populated. Use provided val
   }
 });
 
-type VenueAgentInput = {
+export type VenueAgentInput = {
   venue_name: string;
-  locality?: string;
-  details?: string;
-  booking_link?: string;
 };
 
 // Database operation results
-type DatabaseOperationResult = {
+export type DatabaseOperationResult = {
   city_id: number;
   city_region_id: number;
   locality_id: number;
@@ -171,7 +86,7 @@ export const runVenueLocalityWorkflow = async (
   enableLogging: boolean = false
 ): Promise<{
   output_text: string;
-  output_parsed: z.infer<typeof VenueLocalityAgentSchema>;
+  output_parsed: VenueLocalityAgentOutput;
 }> => {
   return await withTrace("Venue Locality Generation with DB", async () => {
     const conversationHistory: AgentInputItem[] = [
@@ -179,22 +94,7 @@ export const runVenueLocalityWorkflow = async (
         role: "user",
         content: [{
           type: "input_text",
-          text: `Generate venue, locality, and city region database rows for:
-
-Venue Name: ${input.venue_name}
-Locality: ${input.locality || '[NOT PROVIDED - research and determine]'}
-Details/Notes: ${input.details || '[NOT PROVIDED - research and determine]'}
-Booking Link: ${input.booking_link || '[NOT PROVIDED - research and determine]'}
-
-Please research this venue and generate complete rows for venue, locality, and city region tables.
-Focus on finding accurate geographic information, addresses, and operational details.
-
-IMPORTANT FIELD HANDLING:
-- Locality: ${input.locality ? `USE THE PROVIDED VALUE: "${input.locality}"` : 'RESEARCH AND DETERMINE the locality name'}
-- Notes: ${input.details ? `USE THE PROVIDED VALUE: "${input.details}"` : 'RESEARCH AND GENERATE appropriate notes, or set to null'}
-- Booking Link: ${input.booking_link ? `USE THE PROVIDED VALUE: "${input.booking_link}"` : 'RESEARCH AND FIND a booking link if available, or set to null'}
-
-For all other fields not mentioned above, research and determine them through web search.`
+          text: getVenueExtractionUserMessage(input.venue_name)
         }]
       }
     ];
@@ -230,7 +130,7 @@ For all other fields not mentioned above, research and determine them through we
  * This should be called within a transaction context
  */
 export const performVenueDatabaseOperations = async (
-  agentOutput: z.infer<typeof VenueLocalityAgentSchema>,
+  agentOutput: VenueLocalityAgentOutput,
   client: PoolClient,
   enableLogging: boolean = false
 ): Promise<DatabaseOperationResult> => {
@@ -239,7 +139,7 @@ export const performVenueDatabaseOperations = async (
 
 // Helper function to perform database operations with similarity matching
 async function performDatabaseOperations(
-  agentOutput: z.infer<typeof VenueLocalityAgentSchema>,
+  agentOutput: VenueLocalityAgentOutput,
   client?: PoolClient,
   enableLogging: boolean = false
 ): Promise<DatabaseOperationResult> {
@@ -396,9 +296,7 @@ async function performDatabaseOperations(
       open_time: venue_row.open_time,
       close_time: venue_row.close_time,
       locality_id: localityId,
-      type: venue_row.type,
-      booking_link: venue_row.booking_link,
-      notes: venue_row.notes
+      type: venue_row.type
     }, client);
     venueId = newVenue.venue_id;
     createdNewVenue = true;

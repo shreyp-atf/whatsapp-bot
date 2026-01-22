@@ -104,6 +104,8 @@ export interface Venue {
   updated_at: Date;
   locality_id: number;
   type: string;
+  booking_link: string | null;
+  notes: string | null;
 }
 
 export interface ActivityVenueMap {

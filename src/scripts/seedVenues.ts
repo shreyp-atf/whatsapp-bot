@@ -12,13 +12,15 @@ import { withTransaction } from '../db/connection';
 
 interface VenueSeed {
   venue_name: string;
-  locality: string;
+  locality?: string;
+  details?: string;
+  booking_link?: string;
 }
 
 interface VenueProcessingResult {
   success: boolean;
   venue_name: string;
-  locality: string;
+  locality?: string;
   venue_id?: number;
   error?: Error;
   created_new_city?: boolean;
@@ -38,12 +40,15 @@ function parseLoggingFlag(): boolean {
 
 async function processVenue(venue: VenueSeed, enableLogging: boolean = false): Promise<VenueProcessingResult> {
   try {
-    console.log(`Processing: "${venue.venue_name}" in ${venue.locality}`);
+    console.log(`Processing: "${venue.venue_name}"${venue.locality ? ` in ${venue.locality}` : ''}`);
 
     // Step 1: Run LLM agent to get venue data
     const venueAgentStart = Date.now();
     const agentResult = await runVenueLocalityWorkflow({
-      venue_name: venue.venue_name
+      venue_name: venue.venue_name,
+      locality: venue.locality,
+      details: venue.details,
+      booking_link: venue.booking_link
     }, enableLogging);
     const venueAgentTime = Date.now() - venueAgentStart;
     
@@ -140,7 +145,7 @@ async function main() {
           failed.push({
             success: false,
             venue_name: batch[index]?.venue_name || 'Unknown',
-            locality: batch[index]?.locality || 'Unknown',
+            locality: batch[index]?.locality,
             error: result.reason instanceof Error ? result.reason : new Error(String(result.reason))
           });
         }
