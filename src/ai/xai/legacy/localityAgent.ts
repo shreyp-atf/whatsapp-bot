@@ -11,7 +11,7 @@ import {
   getLocalityExtractionUserMessage
 } from '../utils/extractionPrompts';
 import { createLocality, getAllLocalities } from '../../db/locality';
-import { findClosestLocalityMatch } from './similarityAgent';
+import { findClosestLocalityMatch } from '../similarityAgent';
 import { logger } from '../utils/logging';
 
 export interface LocalityAgentInput {

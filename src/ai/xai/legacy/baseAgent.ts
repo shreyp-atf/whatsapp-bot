@@ -7,7 +7,7 @@
 
 import { generateObject, generateText, Output } from 'ai';
 import { z } from 'zod';
-import { createXaiModel, createXaiResponsesModel } from './client';
+import { createXaiModel, createXaiResponsesModel } from '../client';
 import { xai } from '@ai-sdk/xai';
 import {
   AgentExecutor,

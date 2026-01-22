@@ -5,7 +5,7 @@
  * Uses the same prompts and schemas as OpenAI similarity agents.
  */
 
-import { BaseXaiAgent } from './baseAgent';
+import { BaseXaiAgent } from './legacy/baseAgent';
 import {
   LocalitySimilaritySchema,
   CityRegionSimilaritySchema,

@@ -11,7 +11,7 @@ import {
   getVenueFromUrlExtractionUserMessage
 } from '../utils/extractionPrompts';
 import { createVenue, getAllVenues } from '../../db/venue';
-import { findClosestVenueMatch } from './similarityAgent';
+import { findClosestVenueMatch } from '../similarityAgent';
 import { logger } from '../utils/logging';
 
 export interface VenueAgentInput {

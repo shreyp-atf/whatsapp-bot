@@ -11,7 +11,7 @@ import {
   getCityRegionExtractionUserMessage
 } from '../utils/extractionPrompts';
 import { createCityRegion, getAllCityRegions } from '../../db/cityRegion';
-import { findClosestCityRegionMatch } from './similarityAgent';
+import { findClosestCityRegionMatch } from '../similarityAgent';
 import { logger } from '../utils/logging';
 
 export interface CityRegionAgentInput {
