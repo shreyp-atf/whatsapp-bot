@@ -5,14 +5,14 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { LocalityRowSchema, type LocalityRow } from '../utils/schemas';
+import { LocalityRowSchema, type LocalityRow } from '../../utils/schemas';
 import {
   getLocalityExtractionPrompt,
   getLocalityExtractionUserMessage
-} from '../utils/extractionPrompts';
-import { createLocality, getAllLocalities } from '../../db/locality';
+} from '../../utils/extractionPrompts';
+import { createLocality, getAllLocalities } from '../../../db/locality';
 import { findClosestLocalityMatch } from '../similarityAgent';
-import { logger } from '../utils/logging';
+import { logger } from '../../utils/logging';
 
 export interface LocalityAgentInput {
   url: string;

@@ -5,13 +5,13 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { ActivityVenueMapRowSchema, type ActivityVenueMapRow } from '../utils/schemas';
+import { ActivityVenueMapRowSchema, type ActivityVenueMapRow } from '../../utils/schemas';
 import {
   getActivityVenueMapExtractionPrompt,
   getActivityVenueMapExtractionUserMessage
-} from '../utils/extractionPrompts';
-import { createActivityVenueMap, getActivityVenueMapsByActivityAndVenue } from '../../db/activityVenueMap';
-import { logger } from '../utils/logging';
+} from '../../utils/extractionPrompts';
+import { createActivityVenueMap, getActivityVenueMapsByActivityAndVenue } from '../../../db/activityVenueMap';
+import { logger } from '../../utils/logging';
 
 export interface ActivityVenueMapAgentInput {
   url: string;

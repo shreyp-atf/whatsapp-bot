@@ -6,9 +6,9 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { MovieExtractionSchema, type MovieExtractionResult } from '../utils/schemas';
-import { getMovieExtractionPrompt, getMovieExtractionUserMessage } from '../utils/extractionPrompts';
-import { logger } from '../utils/logging';
+import { MovieExtractionSchema, type MovieExtractionResult } from '../../utils/schemas';
+import { getMovieExtractionPrompt, getMovieExtractionUserMessage } from '../../utils/extractionPrompts';
+import { logger } from '../../utils/logging';
 
 export interface MovieAgentInput {
   url: string;

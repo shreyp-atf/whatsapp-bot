@@ -14,6 +14,7 @@ import { User } from '../../types/database';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { getActivityVenueMapsByCityAndDateTime } from '../../db/activityVenueMap';
+import { logger } from '../../utils/logging';
 
 export interface ConversationAgentConfig {
   apiKey?: string;
@@ -308,25 +309,80 @@ export class ConversationAgent {
     while (iteration < maxIterations) {
       iteration++;
 
-      // Create a response using the Responses API with conversation context and tools
-      const response = await this.client.responses.create({
-        model: options?.model || 'gpt-4o',
+      // Prepare request options
+      const requestOptions = {
+        model: options?.model || 'gpt-5-mini',
         conversation: conversationId,
         input: iteration === 1 ? [
           {
-            type: 'message',
-            role: 'user',
+            type: 'message' as const,
+            role: 'user' as const,
             content: [
               {
-                type: 'input_text',
+                type: 'input_text' as const,
                 text: message,
               },
             ],
           },
         ] : undefined, // Only include input on first iteration, conversation context handles subsequent ones
         tools: tools.length > 0 ? tools : undefined,
-        temperature: options?.temperature ?? 0.7,
+        reasoning: { effort: 'low' as const },
+      };
+
+      // Log LLM input
+      const inputDetails = Array.isArray(requestOptions.input) 
+        ? requestOptions.input.map((item: any) => {
+            if (Array.isArray(item.content)) {
+              return {
+                role: item.role,
+                content: item.content.map((c: any) => ({
+                  type: c.type,
+                  text: c.text || c.text === '' ? c.text : undefined,
+                  textLength: c.text?.length || 0,
+                })),
+              };
+            }
+            return {
+              role: item.role,
+              content: typeof item.content === 'string' ? item.content : item.content,
+              contentLength: typeof item.content === 'string' ? item.content.length : undefined,
+            };
+          })
+        : requestOptions.input === undefined ? 'undefined' : requestOptions.input;
+      
+      logger.info('LLM Input (ConversationAgent)', {
+        agent: 'ConversationAgent',
+        userId,
+        iteration,
+        model: requestOptions.model,
+        conversationId: requestOptions.conversation,
+        input: inputDetails,
+        inputLength: Array.isArray(requestOptions.input) 
+          ? requestOptions.input.reduce((sum: number, item: any) => {
+              if (Array.isArray(item.content)) {
+                return sum + item.content.reduce((s: number, c: any) => s + (c.text?.length || 0), 0);
+              }
+              return sum + (typeof item.content === 'string' ? item.content.length : 0);
+            }, 0)
+          : 0,
+        hasTools: !!requestOptions.tools,
+        toolCount: requestOptions.tools?.length || 0,
+        toolNames: requestOptions.tools?.map((t: any) => t.name || t.function?.name || 'unknown') || [],
+        reasoning: requestOptions.reasoning,
+        fullRequest: {
+          model: requestOptions.model,
+          conversation: requestOptions.conversation,
+          input: requestOptions.input,
+          tools: requestOptions.tools ? requestOptions.tools.map((t: any) => ({
+            name: t.name || t.function?.name,
+            description: t.description || t.function?.description?.substring(0, 100),
+          })) : undefined,
+          reasoning: requestOptions.reasoning,
+        },
       });
+
+      // Create a response using the Responses API with conversation context and tools
+      const response = await this.client.responses.create(requestOptions);
 
       // Check if there are tool calls in the response
       const toolCalls: Array<{ call_id: string; name: string; arguments: any }> = [];

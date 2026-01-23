@@ -1,407 +1,409 @@
-Setting up MCP server...
-✓ MCP server initialized with streamable HTTP transport
-Verifying database connection...
+[2026-01-23T16:35:17.214Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1406}
+[2026-01-23T16:35:17.215Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1406}
+[2026-01-23T16:35:17.215Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:35:17.215Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+[2026-01-23T16:35:17.216Z] [app] [INFO] Webhook Handler: handleMessageCreated - Entry {"handler":"handleMessageCreated","eventType":"message.created","eventData":{"hasData":true,"chatId":"919899807889@c.us","messageBody":"Hello"}}
+[2026-01-23T16:35:17.216Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted Data {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"Hello","messageBodyLength":5,"hasBotPhoneNumber":true}
+[2026-01-23T16:35:17.216Z] [app] [INFO] Webhook Handler: handleMessageCreated - Processing user message {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"Hello","messageBodyLength":5,"messageFrom":null}
+[2026-01-23T16:35:17.216Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted User ID {"handler":"handleMessageCreated","chatId":"919899807889@c.us","userId":919899807889}
+[2026-01-23T16:35:17.216Z] [app] [INFO] Database: getUserById - Entry {"operation":"getUserById","userId":919899807889}
 ✓ Database connected
-✓ Database connection verified
-Verifying OpenAI connection...
-✓ OpenAI connection verified
-
-🚀 MCP Server (Streamable HTTP)
-Server is running on port 3000
-
-📡 MCP Endpoints (Primary):
-  POST http://localhost:3000/mcp - Client → Server messages
-  GET  http://localhost:3000/mcp - Server → Client streaming (SSE)
-
-📡 Webhook & API Endpoints:
-  POST http://localhost:3000/webhook - Periskope webhook events
-  GET  http://localhost:3000/health - Health check
-  POST http://localhost:3000/api/users
-  POST http://localhost:3000/api/users/get
-  GET  http://localhost:3000/api/users/:userId/persona
-  GET  http://localhost:3000/api/chats/:chatId/messages?offset=0&limit=2000
-  GET  http://localhost:3000/api/activity-venue-maps/:id
-  POST http://localhost:3000/api/activity-venue-maps
-  POST http://localhost:3000/api/send-event-details
-✓ Webhook signature verification enabled
-
-✓ MCP server ready and waiting for connections...
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:42.654Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-03-26",
-    "capabilities": {},
-    "clientInfo": {
-      "name": "mcp",
-      "version": "0.1.0"
-    }
-  },
-  "jsonrpc": "2.0",
-  "id": 0
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "152",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:43.135Z
-Method: GET
-Path: /mcp
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "accept": "text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "cache-control": "no-store",
-  "content-type": "application/json",
-  "mcp-session-id": "fe2a9231-07fc-4807-a7e4-08ab7d2c7813",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:43.139Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "54",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "fe2a9231-07fc-4807-a7e4-08ab7d2c7813",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:43.599Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "tools/list",
-  "jsonrpc": "2.0",
-  "id": 1
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "46",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "fe2a9231-07fc-4807-a7e4-08ab7d2c7813",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:44.071Z
-Method: DELETE
-Path: /mcp
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "fe2a9231-07fc-4807-a7e4-08ab7d2c7813",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-Destroying session: fe2a9231-07fc-4807-a7e4-08ab7d2c7813
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:47.922Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-03-26",
-    "capabilities": {},
-    "clientInfo": {
-      "name": "mcp",
-      "version": "0.1.0"
-    }
-  },
-  "jsonrpc": "2.0",
-  "id": 0
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "152",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:48.386Z
-Method: GET
-Path: /mcp
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "accept": "text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "cache-control": "no-store",
-  "content-type": "application/json",
-  "mcp-session-id": "0c44277e-037c-4fc4-b0eb-b7fb86a8797f",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:48.390Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "54",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "0c44277e-037c-4fc4-b0eb-b7fb86a8797f",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:48.852Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "tools/list",
-  "jsonrpc": "2.0",
-  "id": 1
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "46",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "0c44277e-037c-4fc4-b0eb-b7fb86a8797f",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:49.314Z
-Method: DELETE
-Path: /mcp
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "0c44277e-037c-4fc4-b0eb-b7fb86a8797f",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-Destroying session: 0c44277e-037c-4fc4-b0eb-b7fb86a8797f
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:51.684Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "initialize",
-  "params": {
-    "protocolVersion": "2025-03-26",
-    "capabilities": {},
-    "clientInfo": {
-      "name": "mcp",
-      "version": "0.1.0"
-    }
-  },
-  "jsonrpc": "2.0",
-  "id": 0
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "152",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:52.148Z
-Method: GET
-Path: /mcp
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "accept": "text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "cache-control": "no-store",
-  "content-type": "application/json",
-  "mcp-session-id": "03c83853-9bd9-47db-b3c4-87f8b27b4454",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:52.152Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "notifications/initialized",
-  "jsonrpc": "2.0"
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "54",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "03c83853-9bd9-47db-b3c4-87f8b27b4454",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:52.609Z
-Method: POST
-Path: /mcp
-Request Body: {
-  "method": "tools/list",
-  "jsonrpc": "2.0",
-  "id": 1
-}
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "content-length": "46",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "03c83853-9bd9-47db-b3c4-87f8b27b4454",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-
-=== Incoming Query ===
-Timestamp: 2026-01-18T15:30:53.088Z
-Method: DELETE
-Path: /mcp
-Headers: {
-  "host": "atfwhatsapp.ngrok.app",
-  "user-agent": "ElevenLabs/1.0",
-  "accept": "application/json, text/event-stream",
-  "accept-encoding": "gzip, deflate, br",
-  "content-type": "application/json",
-  "mcp-session-id": "03c83853-9bd9-47db-b3c4-87f8b27b4454",
-  "x-forwarded-for": "34.59.11.47",
-  "x-forwarded-host": "atfwhatsapp.ngrok.app",
-  "x-forwarded-proto": "https"
-}
-IP Address: ::ffff:127.0.0.1
-User-Agent: ElevenLabs/1.0
-========================
-
-Destroying session: 03c83853-9bd9-47db-b3c4-87f8b27b4454
+[2026-01-23T16:35:17.237Z] [app] [INFO] Database: getUserById - Exit {"operation":"getUserById","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true,"hasAgentConversationIds":true,"agentConversationIds":["onboarding"]}
+[2026-01-23T16:35:17.238Z] [app] [INFO] Webhook Handler: handleMessageCreated - User exists {"handler":"handleMessageCreated","userId":919899807889,"hasConversationId":true}
+[2026-01-23T16:35:17.238Z] [app] [INFO] Webhook Handler: handleMessageCreated - Calling processMessage {"handler":"handleMessageCreated","userId":919899807889,"messageBody":"Hello","messageBodyLength":5}
+[2026-01-23T16:35:17.239Z] [app] [INFO] Process Message: Entry {"operation":"processMessage","userId":919899807889,"messageLength":5,"messagePreview":"Hello"}
+[2026-01-23T16:35:17.239Z] [app] [INFO] Process Message: Getting OpenAI client {"operation":"processMessage","userId":919899807889,"hasClientInstance":false}
+[2026-01-23T16:35:17.239Z] [app] [INFO] Process Message: Routing message {"operation":"processMessage","userId":919899807889,"primarySDK":"openai","fallbackSDK":"xai"}
+[2026-01-23T16:35:17.240Z] [app] [INFO] Router: routeMessage - Entry {"operation":"routeMessage","userId":919899807889,"messageLength":5,"messagePreview":"Hello","primarySDK":"openai","fallbackSDK":"xai","hasOpenAIClient":true}
+[2026-01-23T16:35:17.240Z] [app] [INFO] Router: routeMessage - Calling Master Agent {"operation":"routeMessage","userId":919899807889,"primarySDK":"openai"}
+[2026-01-23T16:35:17.240Z] [app] [INFO] Master Agent: Starting execution {"userId":919899807889,"messagePreview":"Hello"}
+[2026-01-23T16:35:17.246Z] [app] [INFO] Tool: getConversationHistory - Entry {"tool":"get_conversation_history","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:35:17.246Z] [app] [INFO] Tool: getConversationHistory - Fetching conversation items {"tool":"get_conversation_history","userId":919899807889,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361"}
+[2026-01-23T16:35:17.981Z] [app] [INFO] Tool: getConversationHistory - Exit {"tool":"get_conversation_history","userId":919899807889,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","totalItems":54,"messageCount":11,"userMessageCount":10,"assistantMessageCount":0,"systemMessageCount":1}
+[2026-01-23T16:35:17.981Z] [app] [INFO] Memory Manager: getLongTermMemory - Entry {"operation":"getLongTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:35:17.982Z] [app] [INFO] Memory Manager: getLongTermMemory - Exit {"operation":"getLongTermMemory","userId":919899807889,"hasPersona":true,"personaKeys":["age","gender","planning_behavior","social_behavior","preferences"]}
+[2026-01-23T16:35:17.982Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:35:17.982Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:35:17.985Z] [app] [INFO] Conversation Manager: ensureConversation - Entry {"operation":"ensureConversation","userId":919899807889,"createUserIfNotExists":false,"allowMissingUser":true,"agentName":"master","isMasterAgent":true,"hasAgentPrompt":true,"hasUserObject":true}
+[2026-01-23T16:35:17.986Z] [app] [INFO] Conversation Manager: ensureConversation - Exit (existing conversation) {"operation":"ensureConversation","userId":919899807889,"agentName":"master","conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","isMasterAgent":true}
+[2026-01-23T16:35:18.509Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":1,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[{"role":"user","content":[{"type":"input_text","text":"Hello","textLength":5}]}],"inputLength":5,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[{"type":"message","role":"user","content":[{"type":"input_text","text":"Hello"}]}],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:35:24.302Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":1,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":2,"hasToolCalls":true,"toolCalls":[{"name":"fetch_user","call_id":"call_IbTIBTGOrnTJiw1YPalWaZS0","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:35:24.302Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":1,"toolCalls":[{"name":"fetch_user","call_id":"call_IbTIBTGOrnTJiw1YPalWaZS0","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:35:24.302Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","toolCallId":"call_IbTIBTGOrnTJiw1YPalWaZS0","arguments":"{\"user_id\":919899807889}"}
+[2026-01-23T16:35:24.302Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user"}
+[2026-01-23T16:35:24.303Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"fetch_user","userId":919899807889,"args":"{\"user_id\":919899807889}","hasOpenAIClient":true}
+[2026-01-23T16:35:24.303Z] [app] [INFO] Tool: fetchUser - Entry {"tool":"fetch_user","userId":919899807889}
+[2026-01-23T16:35:24.303Z] [app] [INFO] Database: getUserById - Entry {"operation":"getUserById","userId":919899807889}
+[2026-01-23T16:35:24.306Z] [app] [INFO] Database: getUserById - Exit {"operation":"getUserById","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true,"hasAgentConversationIds":true,"agentConversationIds":["onboarding"]}
+[2026-01-23T16:35:24.306Z] [app] [INFO] Tool: fetchUser - Exit {"tool":"fetch_user","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true}
+[2026-01-23T16:35:24.306Z] [app] [INFO] Tool Executor: executeTool - Exit (Success) {"executor":"executeTool","toolName":"fetch_user","userId":919899807889,"resultType":"object","resultSize":592,"resultPreview":"{\"user_id\":919899807889,\"created_at\":\"2026-01-23T16:23:01.025Z\",\"updated_at\":\"2026-01-23T16:32:45.582Z\",\"name\":\"Shrey\",\"bio\":null,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"plann"}
+[2026-01-23T16:35:24.306Z] [app] [INFO] Master Agent: Regular tool execution completed {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","resultType":"object"}
+[2026-01-23T16:35:24.306Z] [app] [INFO] Master Agent: Tool result prepared {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","resultLength":592,"resultPreview":"{\"user_id\":919899807889,\"created_at\":\"2026-01-23T16:23:01.025Z\",\"updated_at\":\"2026-01-23T16:32:45.582Z\",\"name\":\"Shrey\",\"bio\":null,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"plann"}
+[2026-01-23T16:35:24.306Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":1,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":0}
+[2026-01-23T16:35:24.840Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":2,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:35:28.556Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":2,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":1,"hasToolCalls":true,"toolCalls":[{"name":"get_short_term_memory","call_id":"call_r6LfYY9TB6FwsJY1AFOfKbmV","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:35:28.557Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":2,"toolCalls":[{"name":"get_short_term_memory","call_id":"call_r6LfYY9TB6FwsJY1AFOfKbmV","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:35:28.557Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":2,"toolName":"get_short_term_memory","toolCallId":"call_r6LfYY9TB6FwsJY1AFOfKbmV","arguments":"{\"user_id\":919899807889}"}
+[2026-01-23T16:35:28.557Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":2,"toolName":"get_short_term_memory"}
+[2026-01-23T16:35:28.557Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"get_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","hasOpenAIClient":true}
+[2026-01-23T16:35:28.557Z] [app] [INFO] Tool: getShortTermMemoryTool - Entry {"tool":"get_short_term_memory","userId":919899807889}
+[2026-01-23T16:35:28.557Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":false}
+[2026-01-23T16:35:28.557Z] [app] [INFO] Database: getUserById - Entry {"operation":"getUserById","userId":919899807889}
+[2026-01-23T16:35:28.560Z] [app] [INFO] Database: getUserById - Exit {"operation":"getUserById","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true,"hasAgentConversationIds":true,"agentConversationIds":["onboarding"]}
+[2026-01-23T16:35:28.560Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:35:28.560Z] [app] [INFO] Tool: getShortTermMemoryTool - Exit {"tool":"get_short_term_memory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:35:28.560Z] [app] [INFO] Tool Executor: executeTool - Exit (Success) {"executor":"executeTool","toolName":"get_short_term_memory","userId":919899807889,"resultType":"object","resultSize":58,"resultPreview":"{\"currentPlan\":{},\"conversationContext\":{\"lastTopic\":\"1\"}}"}
+[2026-01-23T16:35:28.560Z] [app] [INFO] Master Agent: Regular tool execution completed {"agent":"master","userId":919899807889,"iteration":2,"toolName":"get_short_term_memory","resultType":"object"}
+[2026-01-23T16:35:28.560Z] [app] [INFO] Master Agent: Tool result prepared {"agent":"master","userId":919899807889,"iteration":2,"toolName":"get_short_term_memory","resultLength":58,"resultPreview":"{\"currentPlan\":{},\"conversationContext\":{\"lastTopic\":\"1\"}}"}
+[2026-01-23T16:35:28.560Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":2,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":0}
+[2026-01-23T16:35:29.204Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":3,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:35:31.883Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":3,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":1,"hasToolCalls":true,"toolCalls":[{"name":"update_short_term_memory","call_id":"call_Pqq8pZg954rYiHSPT5wo4BCU","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:35:31.884Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":3,"toolCalls":[{"name":"update_short_term_memory","call_id":"call_Pqq8pZg954rYiHSPT5wo4BCU","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:35:31.884Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":3,"toolName":"update_short_term_memory","toolCallId":"call_Pqq8pZg954rYiHSPT5wo4BCU","arguments":"{\"user_id\":919899807889}"}
+[2026-01-23T16:35:31.884Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":3,"toolName":"update_short_term_memory"}
+[2026-01-23T16:35:31.884Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"update_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","hasOpenAIClient":true}
+[2026-01-23T16:35:31.890Z] [app] [ERROR] Tool Executor: executeTool - Exit (Error) {"executor":"executeTool","toolName":"update_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","error":{"name":"TypeError","message":"Cannot read properties of undefined (reading 'activeAgent')","stack":"TypeError: Cannot read properties of undefined (reading 'activeAgent')\n    at updateShortTermMemoryTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:238:25)\n    at executeTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:535:24)\n    at customExecuteTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:128:20)\n    at executeMasterAgentWithSubAgents (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:509:32)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async executeMasterAgent (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:134:22)\n    at async routeMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/router.ts:63:22)\n    at async processMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/index.ts:65:22)\n    at async handleMessageCreated (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:335:22)\n    at async routeWebhookEvent (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:558:5)"}}
+[2026-01-23T16:35:31.891Z] [app] [ERROR] Master Agent: Tool execution failed {"agent":"master","userId":919899807889,"iteration":3,"toolName":"update_short_term_memory","toolCallId":"call_Pqq8pZg954rYiHSPT5wo4BCU","arguments":"{\"user_id\":919899807889}","error":{"name":"TypeError","message":"Cannot read properties of undefined (reading 'activeAgent')","stack":"TypeError: Cannot read properties of undefined (reading 'activeAgent')\n    at updateShortTermMemoryTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:238:25)\n    at executeTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:535:24)\n    at customExecuteTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:128:20)\n    at executeMasterAgentWithSubAgents (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:509:32)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async executeMasterAgent (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:134:22)\n    at async routeMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/router.ts:63:22)\n    at async processMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/index.ts:65:22)\n    at async handleMessageCreated (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:335:22)\n    at async routeWebhookEvent (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:558:5)"}}
+[2026-01-23T16:35:31.891Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":3,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":0}
+[2026-01-23T16:35:32.477Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":4,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:35:34.747Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":4,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"Hey Shrey — nice to see you again! How can I help you today? Want to find a movie, plan a board-game night, or explore something else in Delhi?","outputTextLength":143,"outputItemCount":1,"hasToolCalls":false,"toolCalls":[]}
+[2026-01-23T16:35:34.748Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Entry {"operation":"mergeShortTermMemory","userId":919899807889,"updateKeys":["conversationContext"],"activeAgent":null,"hasCurrentPlan":false,"hasConversationContext":true,"hasUserObject":true}
+[2026-01-23T16:35:34.748Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:35:34.748Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:35:34.748Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Current state retrieved {"operation":"mergeShortTermMemory","userId":919899807889,"hasCurrent":true,"currentActiveAgent":null}
+[2026-01-23T16:35:34.748Z] [app] [INFO] Memory Manager: updateShortTermMemory - Entry {"operation":"updateShortTermMemory","userId":919899807889,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true,"stateKeys":["currentPlan","conversationContext"]}
+[2026-01-23T16:35:34.748Z] [app] [INFO] Database: updateUser - Entry {"operation":"updateUser","userId":919899807889,"updateFields":["short_term_memory_json"],"hasName":false,"hasBio":false,"hasPersona":false,"hasShortTermMemory":true,"hasLocalityId":false,"hasConversationId":false,"hasAgentConversationIds":false}
+[2026-01-23T16:35:34.748Z] [app] [INFO] Database: updateUser - Executing query {"operation":"updateUser","userId":919899807889,"fieldCount":2,"fields":["short_term_memory_json","updated_at"]}
+[2026-01-23T16:35:34.752Z] [app] [INFO] Database: updateUser - Exit {"operation":"updateUser","userId":919899807889,"updatedAt":"2026-01-23T16:35:34.748Z","fieldsUpdated":2}
+[2026-01-23T16:35:34.752Z] [app] [INFO] Memory Manager: updateShortTermMemory - Exit {"operation":"updateShortTermMemory","userId":919899807889,"memoryUpdated":true}
+[2026-01-23T16:35:34.752Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Exit {"operation":"mergeShortTermMemory","userId":919899807889,"memoryMerged":true}
+[2026-01-23T16:35:34.752Z] [app] [INFO] Master Agent: Completed execution {"userId":919899807889,"responsePreview":"Hey Shrey — nice to see you again! How can I help you today? Want to find a movie, plan a board-game"}
+[2026-01-23T16:35:34.752Z] [app] [INFO] Router: routeMessage - Exit (Success) {"operation":"routeMessage","userId":919899807889,"responseLength":143,"responsePreview":"Hey Shrey — nice to see you again! How can I help you today? Want to find a movie, plan a board-game night, or explore something else in Delhi?"}
+[2026-01-23T16:35:34.752Z] [app] [INFO] Process Message: Exit (Success) {"operation":"processMessage","userId":919899807889,"responseLength":143,"responsePreview":"Hey Shrey — nice to see you again! How can I help you today? Want to find a movie, plan a board-game night, or explore something else in Delhi?"}
+[2026-01-23T16:35:34.753Z] [app] [INFO] Webhook Handler: handleMessageCreated - Received response from processMessage {"handler":"handleMessageCreated","userId":919899807889,"responseLength":143,"response":"Hey Shrey — nice to see you again! How can I help you today? Want to find a movie, plan a board-game night, or explore something else in Delhi?"}
+[2026-01-23T16:35:34.753Z] [app] [INFO] Webhook Handler: handleMessageCreated - Sending response via Periskope {"handler":"handleMessageCreated","userId":919899807889,"chatId":"919899807889@c.us","responseLength":143}
+[2026-01-23T16:35:34.924Z] [app] [INFO] Webhook Handler: handleMessageCreated - Response sent successfully {"handler":"handleMessageCreated","userId":919899807889,"chatId":"919899807889@c.us","responseLength":143}
+[2026-01-23T16:35:34.925Z] [app] [INFO] Webhook Handler: handleMessageCreated - Exit {"handler":"handleMessageCreated","userId":919899807889}
+[2026-01-23T16:35:34.925Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:35:35.147Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1607}
+[2026-01-23T16:35:35.147Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1607}
+[2026-01-23T16:35:35.148Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:35:35.148Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+[2026-01-23T16:35:35.148Z] [app] [INFO] Webhook Handler: handleMessageCreated - Entry {"handler":"handleMessageCreated","eventType":"message.created","eventData":{"hasData":true,"chatId":"919899807889@c.us","messageBody":"Hey Shrey — nice to see you again! How can I help you today? Want to find a movie, plan a board-game night, or explore something else in Delhi?"}}
+[2026-01-23T16:35:35.148Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted Data {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"Hey Shrey — nice to see you again! How can I help you today? Want to find a movie, plan a board-game night, or explore something else in Delhi?","messageBodyLength":143,"hasBotPhoneNumber":true}
+[2026-01-23T16:35:35.148Z] [app] [INFO] Webhook Handler: handleMessageCreated - Bot message detected (from_me) {"handler":"handleMessageCreated","chatId":"919899807889@c.us","reason":"from_me=true"}
+[2026-01-23T16:35:35.148Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:35:35.869Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1702}
+[2026-01-23T16:35:35.869Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1702}
+[2026-01-23T16:35:35.869Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:35:35.869Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+Event Type: message.ack.updated received
+[2026-01-23T16:35:35.869Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:35:35.873Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1702}
+[2026-01-23T16:35:35.873Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1702}
+[2026-01-23T16:35:35.873Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:35:35.873Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+Event Type: message.ack.updated received
+[2026-01-23T16:35:35.873Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1442}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1442}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Webhook Handler: handleMessageCreated - Entry {"handler":"handleMessageCreated","eventType":"message.created","eventData":{"hasData":true,"chatId":"919899807889@c.us","messageBody":"I’m not a planner. I’m more impromptu"}}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted Data {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"I’m not a planner. I’m more impromptu","messageBodyLength":37,"hasBotPhoneNumber":true}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Webhook Handler: handleMessageCreated - Processing user message {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"I’m not a planner. I’m more impromptu","messageBodyLength":37,"messageFrom":null}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted User ID {"handler":"handleMessageCreated","chatId":"919899807889@c.us","userId":919899807889}
+[2026-01-23T16:36:03.118Z] [app] [INFO] Database: getUserById - Entry {"operation":"getUserById","userId":919899807889}
+✓ Database connected
+[2026-01-23T16:36:03.142Z] [app] [INFO] Database: getUserById - Exit {"operation":"getUserById","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true,"hasAgentConversationIds":true,"agentConversationIds":["onboarding"]}
+[2026-01-23T16:36:03.143Z] [app] [INFO] Webhook Handler: handleMessageCreated - User exists {"handler":"handleMessageCreated","userId":919899807889,"hasConversationId":true}
+[2026-01-23T16:36:03.143Z] [app] [INFO] Webhook Handler: handleMessageCreated - Calling processMessage {"handler":"handleMessageCreated","userId":919899807889,"messageBody":"I’m not a planner. I’m more impromptu","messageBodyLength":37}
+[2026-01-23T16:36:03.143Z] [app] [INFO] Process Message: Entry {"operation":"processMessage","userId":919899807889,"messageLength":37,"messagePreview":"I’m not a planner. I’m more impromptu"}
+[2026-01-23T16:36:03.143Z] [app] [INFO] Process Message: Getting OpenAI client {"operation":"processMessage","userId":919899807889,"hasClientInstance":true}
+[2026-01-23T16:36:03.143Z] [app] [INFO] Process Message: Routing message {"operation":"processMessage","userId":919899807889,"primarySDK":"openai","fallbackSDK":"xai"}
+[2026-01-23T16:36:03.143Z] [app] [INFO] Router: routeMessage - Entry {"operation":"routeMessage","userId":919899807889,"messageLength":37,"messagePreview":"I’m not a planner. I’m more impromptu","primarySDK":"openai","fallbackSDK":"xai","hasOpenAIClient":true}
+[2026-01-23T16:36:03.143Z] [app] [INFO] Router: routeMessage - Calling Master Agent {"operation":"routeMessage","userId":919899807889,"primarySDK":"openai"}
+[2026-01-23T16:36:03.143Z] [app] [INFO] Master Agent: Starting execution {"userId":919899807889,"messagePreview":"I’m not a planner. I’m more impromptu"}
+[2026-01-23T16:36:03.144Z] [app] [INFO] Tool: getConversationHistory - Entry {"tool":"get_conversation_history","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:36:03.144Z] [app] [INFO] Tool: getConversationHistory - Fetching conversation items {"tool":"get_conversation_history","userId":919899807889,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361"}
+[2026-01-23T16:36:03.973Z] [app] [INFO] Tool: getConversationHistory - Exit {"tool":"get_conversation_history","userId":919899807889,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","totalItems":64,"messageCount":13,"userMessageCount":12,"assistantMessageCount":0,"systemMessageCount":1}
+[2026-01-23T16:36:03.973Z] [app] [INFO] Memory Manager: getLongTermMemory - Entry {"operation":"getLongTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:36:03.973Z] [app] [INFO] Memory Manager: getLongTermMemory - Exit {"operation":"getLongTermMemory","userId":919899807889,"hasPersona":true,"personaKeys":["age","gender","planning_behavior","social_behavior","preferences"]}
+[2026-01-23T16:36:03.973Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:36:03.973Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:36:03.974Z] [app] [INFO] Conversation Manager: ensureConversation - Entry {"operation":"ensureConversation","userId":919899807889,"createUserIfNotExists":false,"allowMissingUser":true,"agentName":"master","isMasterAgent":true,"hasAgentPrompt":true,"hasUserObject":true}
+[2026-01-23T16:36:03.974Z] [app] [INFO] Conversation Manager: ensureConversation - Exit (existing conversation) {"operation":"ensureConversation","userId":919899807889,"agentName":"master","conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","isMasterAgent":true}
+[2026-01-23T16:36:04.505Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":1,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[{"role":"user","content":[{"type":"input_text","text":"I’m not a planner. I’m more impromptu","textLength":37}]}],"inputLength":37,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[{"type":"message","role":"user","content":[{"type":"input_text","text":"I’m not a planner. I’m more impromptu"}]}],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:36:12.118Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":1,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":2,"hasToolCalls":true,"toolCalls":[{"name":"fetch_user","call_id":"call_a8tPZ8cV7Zaq7EpL9dlGZ6qS","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:36:12.118Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":1,"toolCalls":[{"name":"fetch_user","call_id":"call_a8tPZ8cV7Zaq7EpL9dlGZ6qS","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:36:12.119Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","toolCallId":"call_a8tPZ8cV7Zaq7EpL9dlGZ6qS","arguments":"{\"user_id\":919899807889}"}
+[2026-01-23T16:36:12.119Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user"}
+[2026-01-23T16:36:12.119Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"fetch_user","userId":919899807889,"args":"{\"user_id\":919899807889}","hasOpenAIClient":true}
+[2026-01-23T16:36:12.119Z] [app] [INFO] Tool: fetchUser - Entry {"tool":"fetch_user","userId":919899807889}
+[2026-01-23T16:36:12.119Z] [app] [INFO] Database: getUserById - Entry {"operation":"getUserById","userId":919899807889}
+[2026-01-23T16:36:12.122Z] [app] [INFO] Database: getUserById - Exit {"operation":"getUserById","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true,"hasAgentConversationIds":true,"agentConversationIds":["onboarding"]}
+[2026-01-23T16:36:12.122Z] [app] [INFO] Tool: fetchUser - Exit {"tool":"fetch_user","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true}
+[2026-01-23T16:36:12.122Z] [app] [INFO] Tool Executor: executeTool - Exit (Success) {"executor":"executeTool","toolName":"fetch_user","userId":919899807889,"resultType":"object","resultSize":596,"resultPreview":"{\"user_id\":919899807889,\"created_at\":\"2026-01-23T16:23:01.025Z\",\"updated_at\":\"2026-01-23T16:35:34.748Z\",\"name\":\"Shrey\",\"bio\":null,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"plann"}
+[2026-01-23T16:36:12.122Z] [app] [INFO] Master Agent: Regular tool execution completed {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","resultType":"object"}
+[2026-01-23T16:36:12.122Z] [app] [INFO] Master Agent: Tool result prepared {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","resultLength":596,"resultPreview":"{\"user_id\":919899807889,\"created_at\":\"2026-01-23T16:23:01.025Z\",\"updated_at\":\"2026-01-23T16:35:34.748Z\",\"name\":\"Shrey\",\"bio\":null,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"plann"}
+[2026-01-23T16:36:12.122Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":1,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":0}
+[2026-01-23T16:36:13.040Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":2,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:36:15.346Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":2,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":1,"hasToolCalls":true,"toolCalls":[{"name":"update_user","call_id":"call_bTtxj2nawZcPMhI5fgY9c5M4","arguments":"{\"user_id\":919899807889,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"impromptu\"],\"social_behavior\":[\"ambivert\"],\"preferences\":[\"movies\",\"board_games\"]}}"}]}
+[2026-01-23T16:36:15.346Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":2,"toolCalls":[{"name":"update_user","call_id":"call_bTtxj2nawZcPMhI5fgY9c5M4","arguments":"{\"user_id\":919899807889,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"impromptu\"],\"social_behavior\":[\"ambivert\"],\"preferences\":[\"movies\",\"board_games\"]}}"}]}
+[2026-01-23T16:36:15.346Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_user","toolCallId":"call_bTtxj2nawZcPMhI5fgY9c5M4","arguments":"{\"user_id\":919899807889,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"impromptu\"],\"social_behavior\":[\"ambivert\"],\"preferences\":[\"movies\",\"board_games\"]}}"}
+[2026-01-23T16:36:15.346Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_user"}
+[2026-01-23T16:36:15.346Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"update_user","userId":919899807889,"args":"{\"user_id\":919899807889,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"impromptu\"],\"social_behavior\":[\"ambivert\"],\"preferences\":[\"movies\",\"board_games\"]}}","hasOpenAIClient":true}
+[2026-01-23T16:36:15.346Z] [app] [INFO] Tool: updateUserTool - Entry {"tool":"update_user","userId":919899807889,"updateFields":["name","bio","persona_json","short_term_memory_json","locality_id","conversation_id"],"hasPersona":true,"hasShortTermMemory":true}
+[2026-01-23T16:36:15.346Z] [app] [INFO] Database: updateUser - Entry {"operation":"updateUser","userId":919899807889,"updateFields":["name","bio","persona_json","short_term_memory_json","locality_id","conversation_id"],"hasName":true,"hasBio":true,"hasPersona":true,"hasShortTermMemory":true,"hasLocalityId":true,"hasConversationId":true,"hasAgentConversationIds":false}
+[2026-01-23T16:36:15.346Z] [app] [INFO] Database: updateUser - Executing query {"operation":"updateUser","userId":919899807889,"fieldCount":2,"fields":["persona_json","updated_at"]}
+[2026-01-23T16:36:15.351Z] [app] [INFO] Database: updateUser - Exit {"operation":"updateUser","userId":919899807889,"updatedAt":"2026-01-23T16:36:15.346Z","fieldsUpdated":2}
+[2026-01-23T16:36:15.351Z] [app] [INFO] Tool: updateUserTool - Exit {"tool":"update_user","userId":919899807889,"updatedAt":"2026-01-23T16:36:15.346Z","fieldsUpdated":6}
+[2026-01-23T16:36:15.351Z] [app] [INFO] Tool Executor: executeTool - Exit (Success) {"executor":"executeTool","toolName":"update_user","userId":919899807889,"resultType":"object","resultSize":598,"resultPreview":"{\"user_id\":919899807889,\"created_at\":\"2026-01-23T16:23:01.025Z\",\"updated_at\":\"2026-01-23T16:36:15.346Z\",\"name\":\"Shrey\",\"bio\":null,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"impro"}
+[2026-01-23T16:36:15.351Z] [app] [INFO] Master Agent: Regular tool execution completed {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_user","resultType":"object"}
+[2026-01-23T16:36:15.351Z] [app] [INFO] Master Agent: Tool result prepared {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_user","resultLength":598,"resultPreview":"{\"user_id\":919899807889,\"created_at\":\"2026-01-23T16:23:01.025Z\",\"updated_at\":\"2026-01-23T16:36:15.346Z\",\"name\":\"Shrey\",\"bio\":null,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"impro"}
+[2026-01-23T16:36:15.351Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":2,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":0}
+[2026-01-23T16:36:15.878Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":3,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:36:19.658Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":3,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":1,"hasToolCalls":true,"toolCalls":[{"name":"update_short_term_memory","call_id":"call_GTC2QzPgLKmi4yf9FebnxqA3","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:36:19.659Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":3,"toolCalls":[{"name":"update_short_term_memory","call_id":"call_GTC2QzPgLKmi4yf9FebnxqA3","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:36:19.659Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":3,"toolName":"update_short_term_memory","toolCallId":"call_GTC2QzPgLKmi4yf9FebnxqA3","arguments":"{\"user_id\":919899807889}"}
+[2026-01-23T16:36:19.659Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":3,"toolName":"update_short_term_memory"}
+[2026-01-23T16:36:19.659Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"update_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","hasOpenAIClient":true}
+[2026-01-23T16:36:19.660Z] [app] [ERROR] Tool Executor: executeTool - Exit (Error) {"executor":"executeTool","toolName":"update_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","error":{"name":"TypeError","message":"Cannot read properties of undefined (reading 'activeAgent')","stack":"TypeError: Cannot read properties of undefined (reading 'activeAgent')\n    at updateShortTermMemoryTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:238:25)\n    at executeTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:535:24)\n    at customExecuteTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:128:20)\n    at executeMasterAgentWithSubAgents (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:509:32)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async executeMasterAgent (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:134:22)\n    at async routeMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/router.ts:63:22)\n    at async processMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/index.ts:65:22)\n    at async handleMessageCreated (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:335:22)\n    at async routeWebhookEvent (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:558:5)"}}
+[2026-01-23T16:36:19.660Z] [app] [ERROR] Master Agent: Tool execution failed {"agent":"master","userId":919899807889,"iteration":3,"toolName":"update_short_term_memory","toolCallId":"call_GTC2QzPgLKmi4yf9FebnxqA3","arguments":"{\"user_id\":919899807889}","error":{"name":"TypeError","message":"Cannot read properties of undefined (reading 'activeAgent')","stack":"TypeError: Cannot read properties of undefined (reading 'activeAgent')\n    at updateShortTermMemoryTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:238:25)\n    at executeTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:535:24)\n    at customExecuteTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:128:20)\n    at executeMasterAgentWithSubAgents (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:509:32)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async executeMasterAgent (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:134:22)\n    at async routeMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/router.ts:63:22)\n    at async processMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/index.ts:65:22)\n    at async handleMessageCreated (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:335:22)\n    at async routeWebhookEvent (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:558:5)"}}
+[2026-01-23T16:36:19.660Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":3,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":0}
+[2026-01-23T16:36:20.237Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":4,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:36:22.882Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":4,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"Nice — got it. I've updated your profile to say you're more impromptu (not a planner).\n\nBeing impromptu opens up fun, low-friction options. Want one of these right now?\n- Quick movie tonight (I can check showtimes near you)\n- Nearby café or rooftop for a spontaneous hangout\n- A same-day board-game meetup (I can message friends or suggest spots)\n- Something outdoors—short walk, pop-up event, or street food crawl\n\nWhich sounds good, or tell me what mood you're in and I'll suggest something immedia...","outputTextLength":503,"outputItemCount":1,"hasToolCalls":false,"toolCalls":[]}
+[2026-01-23T16:36:22.882Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Entry {"operation":"mergeShortTermMemory","userId":919899807889,"updateKeys":["conversationContext"],"activeAgent":null,"hasCurrentPlan":false,"hasConversationContext":true,"hasUserObject":true}
+[2026-01-23T16:36:22.882Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:36:22.882Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:36:22.882Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Current state retrieved {"operation":"mergeShortTermMemory","userId":919899807889,"hasCurrent":true,"currentActiveAgent":null}
+[2026-01-23T16:36:22.882Z] [app] [INFO] Memory Manager: updateShortTermMemory - Entry {"operation":"updateShortTermMemory","userId":919899807889,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true,"stateKeys":["currentPlan","conversationContext"]}
+[2026-01-23T16:36:22.882Z] [app] [INFO] Database: updateUser - Entry {"operation":"updateUser","userId":919899807889,"updateFields":["short_term_memory_json"],"hasName":false,"hasBio":false,"hasPersona":false,"hasShortTermMemory":true,"hasLocalityId":false,"hasConversationId":false,"hasAgentConversationIds":false}
+[2026-01-23T16:36:22.882Z] [app] [INFO] Database: updateUser - Executing query {"operation":"updateUser","userId":919899807889,"fieldCount":2,"fields":["short_term_memory_json","updated_at"]}
+[2026-01-23T16:36:22.886Z] [app] [INFO] Database: updateUser - Exit {"operation":"updateUser","userId":919899807889,"updatedAt":"2026-01-23T16:36:22.882Z","fieldsUpdated":2}
+[2026-01-23T16:36:22.886Z] [app] [INFO] Memory Manager: updateShortTermMemory - Exit {"operation":"updateShortTermMemory","userId":919899807889,"memoryUpdated":true}
+[2026-01-23T16:36:22.887Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Exit {"operation":"mergeShortTermMemory","userId":919899807889,"memoryMerged":true}
+[2026-01-23T16:36:22.887Z] [app] [INFO] Master Agent: Completed execution {"userId":919899807889,"responsePreview":"Nice — got it. I've updated your profile to say you're more impromptu (not a planner).\n\nBeing improm"}
+[2026-01-23T16:36:22.887Z] [app] [INFO] Router: routeMessage - Exit (Success) {"operation":"routeMessage","userId":919899807889,"responseLength":503,"responsePreview":"Nice — got it. I've updated your profile to say you're more impromptu (not a planner).\n\nBeing impromptu opens up fun, low-friction options. Want one of these right now?\n- Quick movie tonight (I can ch..."}
+[2026-01-23T16:36:22.887Z] [app] [INFO] Process Message: Exit (Success) {"operation":"processMessage","userId":919899807889,"responseLength":503,"responsePreview":"Nice — got it. I've updated your profile to say you're more impromptu (not a planner).\n\nBeing impromptu opens up fun, low-friction options. Want one of these right now?\n- Quick movie tonight (I can check showtimes near you)\n- Nearby café or rooftop for a spontaneous hangout\n- A same-day board-game meetup (I can message friends or suggest spots)\n- Something outdoors—short walk, pop-up event, or street food crawl\n\nWhich sounds good, or tell me what mood you're in and I'll suggest something immedia..."}
+[2026-01-23T16:36:22.887Z] [app] [INFO] Webhook Handler: handleMessageCreated - Received response from processMessage {"handler":"handleMessageCreated","userId":919899807889,"responseLength":503,"response":"Nice — got it. I've updated your profile to say you're more impromptu (not a planner).\n\nBeing impromptu opens up fun, low-friction options. Want one of these right now?\n- Quick movie tonight (I can check showtimes near you)\n- Nearby café or rooftop for a spontaneous hangout\n- A same-day board-game meetup (I can message friends or suggest spots)\n- Something outdoors—short walk, pop-up event, or street food crawl\n\nWhich sounds good, or tell me what mood you're in and I'll suggest something immedia..."}
+[2026-01-23T16:36:22.887Z] [app] [INFO] Webhook Handler: handleMessageCreated - Sending response via Periskope {"handler":"handleMessageCreated","userId":919899807889,"chatId":"919899807889@c.us","responseLength":503}
+[2026-01-23T16:36:23.006Z] [app] [INFO] Webhook Handler: handleMessageCreated - Response sent successfully {"handler":"handleMessageCreated","userId":919899807889,"chatId":"919899807889@c.us","responseLength":503}
+[2026-01-23T16:36:23.007Z] [app] [INFO] Webhook Handler: handleMessageCreated - Exit {"handler":"handleMessageCreated","userId":919899807889}
+[2026-01-23T16:36:23.007Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:36:23.223Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1977}
+[2026-01-23T16:36:23.223Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1977}
+[2026-01-23T16:36:23.223Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:36:23.223Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+[2026-01-23T16:36:23.223Z] [app] [INFO] Webhook Handler: handleMessageCreated - Entry {"handler":"handleMessageCreated","eventType":"message.created","eventData":{"hasData":true,"chatId":"919899807889@c.us","messageBody":"Nice — got it. I've updated your profile to say you're more impromptu (not a planner).\n\nBeing impromptu opens up fun, low-friction options. Want one of these right now?\n- Quick movie tonight (I can check showtimes near you)\n- Nearby café or rooftop for a spontaneous hangout\n- A same-day board-game meetup (I can message friends or suggest spots)\n- Something outdoors—short walk, pop-up event, or street food crawl\n\nWhich sounds good, or tell me what mood you're in and I'll suggest something immediate."}}
+[2026-01-23T16:36:23.224Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted Data {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"Nice — got it. I've updated your profile to say you're more impromptu (not a planner).\n\nBeing impromptu opens up fun, low-friction options. Want one of these right now?\n- Quick movie tonight (I can ch...","messageBodyLength":503,"hasBotPhoneNumber":true}
+[2026-01-23T16:36:23.224Z] [app] [INFO] Webhook Handler: handleMessageCreated - Bot message detected (from_me) {"handler":"handleMessageCreated","chatId":"919899807889@c.us","reason":"from_me=true"}
+[2026-01-23T16:36:23.224Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:36:24.005Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":2072}
+[2026-01-23T16:36:24.005Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":2072}
+[2026-01-23T16:36:24.005Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:36:24.005Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+Event Type: message.ack.updated received
+[2026-01-23T16:36:24.005Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:36:24.009Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":2072}
+[2026-01-23T16:36:24.009Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":2072}
+[2026-01-23T16:36:24.009Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:36:24.009Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+Event Type: message.ack.updated received
+[2026-01-23T16:36:24.009Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:36:37.417Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1419}
+[2026-01-23T16:36:37.417Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1419}
+[2026-01-23T16:36:37.417Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:36:37.417Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+[2026-01-23T16:36:37.417Z] [app] [INFO] Webhook Handler: handleMessageCreated - Entry {"handler":"handleMessageCreated","eventType":"message.created","eventData":{"hasData":true,"chatId":"919899807889@c.us","messageBody":"Show me my profile"}}
+[2026-01-23T16:36:37.417Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted Data {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"Show me my profile","messageBodyLength":18,"hasBotPhoneNumber":true}
+[2026-01-23T16:36:37.417Z] [app] [INFO] Webhook Handler: handleMessageCreated - Processing user message {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"Show me my profile","messageBodyLength":18,"messageFrom":null}
+[2026-01-23T16:36:37.418Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted User ID {"handler":"handleMessageCreated","chatId":"919899807889@c.us","userId":919899807889}
+[2026-01-23T16:36:37.418Z] [app] [INFO] Database: getUserById - Entry {"operation":"getUserById","userId":919899807889}
+✓ Database connected
+[2026-01-23T16:36:37.433Z] [app] [INFO] Database: getUserById - Exit {"operation":"getUserById","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true,"hasAgentConversationIds":true,"agentConversationIds":["onboarding"]}
+[2026-01-23T16:36:37.434Z] [app] [INFO] Webhook Handler: handleMessageCreated - User exists {"handler":"handleMessageCreated","userId":919899807889,"hasConversationId":true}
+[2026-01-23T16:36:37.434Z] [app] [INFO] Webhook Handler: handleMessageCreated - Calling processMessage {"handler":"handleMessageCreated","userId":919899807889,"messageBody":"Show me my profile","messageBodyLength":18}
+[2026-01-23T16:36:37.434Z] [app] [INFO] Process Message: Entry {"operation":"processMessage","userId":919899807889,"messageLength":18,"messagePreview":"Show me my profile"}
+[2026-01-23T16:36:37.434Z] [app] [INFO] Process Message: Getting OpenAI client {"operation":"processMessage","userId":919899807889,"hasClientInstance":true}
+[2026-01-23T16:36:37.434Z] [app] [INFO] Process Message: Routing message {"operation":"processMessage","userId":919899807889,"primarySDK":"openai","fallbackSDK":"xai"}
+[2026-01-23T16:36:37.434Z] [app] [INFO] Router: routeMessage - Entry {"operation":"routeMessage","userId":919899807889,"messageLength":18,"messagePreview":"Show me my profile","primarySDK":"openai","fallbackSDK":"xai","hasOpenAIClient":true}
+[2026-01-23T16:36:37.434Z] [app] [INFO] Router: routeMessage - Calling Master Agent {"operation":"routeMessage","userId":919899807889,"primarySDK":"openai"}
+[2026-01-23T16:36:37.434Z] [app] [INFO] Master Agent: Starting execution {"userId":919899807889,"messagePreview":"Show me my profile"}
+[2026-01-23T16:36:37.435Z] [app] [INFO] Tool: getConversationHistory - Entry {"tool":"get_conversation_history","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:36:37.435Z] [app] [INFO] Tool: getConversationHistory - Fetching conversation items {"tool":"get_conversation_history","userId":919899807889,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361"}
+[2026-01-23T16:36:38.326Z] [app] [INFO] Tool: getConversationHistory - Exit {"tool":"get_conversation_history","userId":919899807889,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","totalItems":74,"messageCount":15,"userMessageCount":14,"assistantMessageCount":0,"systemMessageCount":1}
+[2026-01-23T16:36:38.326Z] [app] [INFO] Memory Manager: getLongTermMemory - Entry {"operation":"getLongTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:36:38.326Z] [app] [INFO] Memory Manager: getLongTermMemory - Exit {"operation":"getLongTermMemory","userId":919899807889,"hasPersona":true,"personaKeys":["age","gender","planning_behavior","social_behavior","preferences"]}
+[2026-01-23T16:36:38.326Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:36:38.326Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:36:38.327Z] [app] [INFO] Conversation Manager: ensureConversation - Entry {"operation":"ensureConversation","userId":919899807889,"createUserIfNotExists":false,"allowMissingUser":true,"agentName":"master","isMasterAgent":true,"hasAgentPrompt":true,"hasUserObject":true}
+[2026-01-23T16:36:38.327Z] [app] [INFO] Conversation Manager: ensureConversation - Exit (existing conversation) {"operation":"ensureConversation","userId":919899807889,"agentName":"master","conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","isMasterAgent":true}
+[2026-01-23T16:36:39.045Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":1,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[{"role":"user","content":[{"type":"input_text","text":"Show me my profile","textLength":18}]}],"inputLength":18,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[{"type":"message","role":"user","content":[{"type":"input_text","text":"Show me my profile"}]}],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:36:43.711Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":1,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":2,"hasToolCalls":true,"toolCalls":[{"name":"fetch_user","call_id":"call_ngYXrzIRhL9ToNfh6tauxSad","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:36:43.712Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":1,"toolCalls":[{"name":"fetch_user","call_id":"call_ngYXrzIRhL9ToNfh6tauxSad","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:36:43.712Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","toolCallId":"call_ngYXrzIRhL9ToNfh6tauxSad","arguments":"{\"user_id\":919899807889}"}
+[2026-01-23T16:36:43.712Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user"}
+[2026-01-23T16:36:43.712Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"fetch_user","userId":919899807889,"args":"{\"user_id\":919899807889}","hasOpenAIClient":true}
+[2026-01-23T16:36:43.712Z] [app] [INFO] Tool: fetchUser - Entry {"tool":"fetch_user","userId":919899807889}
+[2026-01-23T16:36:43.712Z] [app] [INFO] Database: getUserById - Entry {"operation":"getUserById","userId":919899807889}
+[2026-01-23T16:36:43.714Z] [app] [INFO] Database: getUserById - Exit {"operation":"getUserById","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true,"hasAgentConversationIds":true,"agentConversationIds":["onboarding"]}
+[2026-01-23T16:36:43.715Z] [app] [INFO] Tool: fetchUser - Exit {"tool":"fetch_user","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true}
+[2026-01-23T16:36:43.715Z] [app] [INFO] Tool Executor: executeTool - Exit (Success) {"executor":"executeTool","toolName":"fetch_user","userId":919899807889,"resultType":"object","resultSize":630,"resultPreview":"{\"user_id\":919899807889,\"created_at\":\"2026-01-23T16:23:01.025Z\",\"updated_at\":\"2026-01-23T16:36:22.882Z\",\"name\":\"Shrey\",\"bio\":null,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"impro"}
+[2026-01-23T16:36:43.715Z] [app] [INFO] Master Agent: Regular tool execution completed {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","resultType":"object"}
+[2026-01-23T16:36:43.715Z] [app] [INFO] Master Agent: Tool result prepared {"agent":"master","userId":919899807889,"iteration":1,"toolName":"fetch_user","resultLength":630,"resultPreview":"{\"user_id\":919899807889,\"created_at\":\"2026-01-23T16:23:01.025Z\",\"updated_at\":\"2026-01-23T16:36:22.882Z\",\"name\":\"Shrey\",\"bio\":null,\"persona_json\":{\"age\":\"29\",\"gender\":\"male\",\"planning_behavior\":[\"impro"}
+[2026-01-23T16:36:43.715Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":1,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":0}
+[2026-01-23T16:36:44.358Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":2,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:36:46.087Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":2,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":1,"hasToolCalls":true,"toolCalls":[{"name":"update_short_term_memory","call_id":"call_UkIhrzsx7fMvdlO5nxaJQtXT","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:36:46.087Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":2,"toolCalls":[{"name":"update_short_term_memory","call_id":"call_UkIhrzsx7fMvdlO5nxaJQtXT","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:36:46.087Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_short_term_memory","toolCallId":"call_UkIhrzsx7fMvdlO5nxaJQtXT","arguments":"{\"user_id\":919899807889}"}
+[2026-01-23T16:36:46.087Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_short_term_memory"}
+[2026-01-23T16:36:46.087Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"update_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","hasOpenAIClient":true}
+[2026-01-23T16:36:46.087Z] [app] [ERROR] Tool Executor: executeTool - Exit (Error) {"executor":"executeTool","toolName":"update_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","error":{"name":"TypeError","message":"Cannot read properties of undefined (reading 'activeAgent')","stack":"TypeError: Cannot read properties of undefined (reading 'activeAgent')\n    at updateShortTermMemoryTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:238:25)\n    at executeTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:535:24)\n    at customExecuteTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:128:20)\n    at executeMasterAgentWithSubAgents (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:509:32)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async executeMasterAgent (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:134:22)\n    at async routeMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/router.ts:63:22)\n    at async processMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/index.ts:65:22)\n    at async handleMessageCreated (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:335:22)\n    at async routeWebhookEvent (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:558:5)"}}
+[2026-01-23T16:36:46.088Z] [app] [ERROR] Master Agent: Tool execution failed {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_short_term_memory","toolCallId":"call_UkIhrzsx7fMvdlO5nxaJQtXT","arguments":"{\"user_id\":919899807889}","error":{"name":"TypeError","message":"Cannot read properties of undefined (reading 'activeAgent')","stack":"TypeError: Cannot read properties of undefined (reading 'activeAgent')\n    at updateShortTermMemoryTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:238:25)\n    at executeTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:535:24)\n    at customExecuteTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:128:20)\n    at executeMasterAgentWithSubAgents (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:509:32)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async executeMasterAgent (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:134:22)\n    at async routeMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/router.ts:63:22)\n    at async processMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/index.ts:65:22)\n    at async handleMessageCreated (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:335:22)\n    at async routeWebhookEvent (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:558:5)"}}
+[2026-01-23T16:36:46.088Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":2,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":0}
+[2026-01-23T16:36:46.670Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":3,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:36:48.941Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":3,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"Here's your profile, Shrey:\n\n- Name: Shrey\n- City: Delhi\n- Age: 29\n- Gender: Male\n- Planning style: impromptu\n- Social style: ambivert\n- Preferences: movies, board games\n\nWant to update anything, or should I suggest something to do right now?","outputTextLength":242,"outputItemCount":1,"hasToolCalls":false,"toolCalls":[]}
+[2026-01-23T16:36:48.941Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Entry {"operation":"mergeShortTermMemory","userId":919899807889,"updateKeys":["conversationContext"],"activeAgent":null,"hasCurrentPlan":false,"hasConversationContext":true,"hasUserObject":true}
+[2026-01-23T16:36:48.941Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:36:48.941Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:36:48.941Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Current state retrieved {"operation":"mergeShortTermMemory","userId":919899807889,"hasCurrent":true,"currentActiveAgent":null}
+[2026-01-23T16:36:48.941Z] [app] [INFO] Memory Manager: updateShortTermMemory - Entry {"operation":"updateShortTermMemory","userId":919899807889,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true,"stateKeys":["currentPlan","conversationContext"]}
+[2026-01-23T16:36:48.941Z] [app] [INFO] Database: updateUser - Entry {"operation":"updateUser","userId":919899807889,"updateFields":["short_term_memory_json"],"hasName":false,"hasBio":false,"hasPersona":false,"hasShortTermMemory":true,"hasLocalityId":false,"hasConversationId":false,"hasAgentConversationIds":false}
+[2026-01-23T16:36:48.941Z] [app] [INFO] Database: updateUser - Executing query {"operation":"updateUser","userId":919899807889,"fieldCount":2,"fields":["short_term_memory_json","updated_at"]}
+[2026-01-23T16:36:48.945Z] [app] [INFO] Database: updateUser - Exit {"operation":"updateUser","userId":919899807889,"updatedAt":"2026-01-23T16:36:48.941Z","fieldsUpdated":2}
+[2026-01-23T16:36:48.945Z] [app] [INFO] Memory Manager: updateShortTermMemory - Exit {"operation":"updateShortTermMemory","userId":919899807889,"memoryUpdated":true}
+[2026-01-23T16:36:48.945Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Exit {"operation":"mergeShortTermMemory","userId":919899807889,"memoryMerged":true}
+[2026-01-23T16:36:48.945Z] [app] [INFO] Master Agent: Completed execution {"userId":919899807889,"responsePreview":"Here's your profile, Shrey:\n\n- Name: Shrey\n- City: Delhi\n- Age: 29\n- Gender: Male\n- Planning style: "}
+[2026-01-23T16:36:48.945Z] [app] [INFO] Router: routeMessage - Exit (Success) {"operation":"routeMessage","userId":919899807889,"responseLength":242,"responsePreview":"Here's your profile, Shrey:\n\n- Name: Shrey\n- City: Delhi\n- Age: 29\n- Gender: Male\n- Planning style: impromptu\n- Social style: ambivert\n- Preferences: movies, board games\n\nWant to update anything, or s..."}
+[2026-01-23T16:36:48.945Z] [app] [INFO] Process Message: Exit (Success) {"operation":"processMessage","userId":919899807889,"responseLength":242,"responsePreview":"Here's your profile, Shrey:\n\n- Name: Shrey\n- City: Delhi\n- Age: 29\n- Gender: Male\n- Planning style: impromptu\n- Social style: ambivert\n- Preferences: movies, board games\n\nWant to update anything, or should I suggest something to do right now?"}
+[2026-01-23T16:36:48.945Z] [app] [INFO] Webhook Handler: handleMessageCreated - Received response from processMessage {"handler":"handleMessageCreated","userId":919899807889,"responseLength":242,"response":"Here's your profile, Shrey:\n\n- Name: Shrey\n- City: Delhi\n- Age: 29\n- Gender: Male\n- Planning style: impromptu\n- Social style: ambivert\n- Preferences: movies, board games\n\nWant to update anything, or should I suggest something to do right now?"}
+[2026-01-23T16:36:48.945Z] [app] [INFO] Webhook Handler: handleMessageCreated - Sending response via Periskope {"handler":"handleMessageCreated","userId":919899807889,"chatId":"919899807889@c.us","responseLength":242}
+[2026-01-23T16:36:49.055Z] [app] [INFO] Webhook Handler: handleMessageCreated - Response sent successfully {"handler":"handleMessageCreated","userId":919899807889,"chatId":"919899807889@c.us","responseLength":242}
+[2026-01-23T16:36:49.055Z] [app] [INFO] Webhook Handler: handleMessageCreated - Exit {"handler":"handleMessageCreated","userId":919899807889}
+[2026-01-23T16:36:49.055Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:36:49.267Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1714}
+[2026-01-23T16:36:49.267Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1714}
+[2026-01-23T16:36:49.268Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:36:49.268Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+[2026-01-23T16:36:49.268Z] [app] [INFO] Webhook Handler: handleMessageCreated - Entry {"handler":"handleMessageCreated","eventType":"message.created","eventData":{"hasData":true,"chatId":"919899807889@c.us","messageBody":"Here's your profile, Shrey:\n\n- Name: Shrey\n- City: Delhi\n- Age: 29\n- Gender: Male\n- Planning style: impromptu\n- Social style: ambivert\n- Preferences: movies, board games\n\nWant to update anything, or should I suggest something to do right now?"}}
+[2026-01-23T16:36:49.268Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted Data {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"Here's your profile, Shrey:\n\n- Name: Shrey\n- City: Delhi\n- Age: 29\n- Gender: Male\n- Planning style: impromptu\n- Social style: ambivert\n- Preferences: movies, board games\n\nWant to update anything, or s...","messageBodyLength":242,"hasBotPhoneNumber":true}
+[2026-01-23T16:36:49.268Z] [app] [INFO] Webhook Handler: handleMessageCreated - Bot message detected (from_me) {"handler":"handleMessageCreated","chatId":"919899807889@c.us","reason":"from_me=true"}
+[2026-01-23T16:36:49.268Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:36:49.974Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1809}
+[2026-01-23T16:36:49.974Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1809}
+[2026-01-23T16:36:49.974Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:36:49.974Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+Event Type: message.ack.updated received
+[2026-01-23T16:36:49.974Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:36:49.997Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1809}
+[2026-01-23T16:36:49.997Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1809}
+[2026-01-23T16:36:49.997Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:36:49.997Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+Event Type: message.ack.updated received
+[2026-01-23T16:36:49.997Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":1441}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":1441}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Webhook Handler: handleMessageCreated - Entry {"handler":"handleMessageCreated","eventType":"message.created","eventData":{"hasData":true,"chatId":"919899807889@c.us","messageBody":"I want to plan a date with my girlfriend"}}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted Data {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"I want to plan a date with my girlfriend","messageBodyLength":40,"hasBotPhoneNumber":true}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Webhook Handler: handleMessageCreated - Processing user message {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"I want to plan a date with my girlfriend","messageBodyLength":40,"messageFrom":null}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted User ID {"handler":"handleMessageCreated","chatId":"919899807889@c.us","userId":919899807889}
+[2026-01-23T16:37:22.310Z] [app] [INFO] Database: getUserById - Entry {"operation":"getUserById","userId":919899807889}
+✓ Database connected
+[2026-01-23T16:37:22.333Z] [app] [INFO] Database: getUserById - Exit {"operation":"getUserById","userId":919899807889,"userFound":true,"hasConversationId":true,"hasPersona":true,"hasShortTermMemory":true,"hasAgentConversationIds":true,"agentConversationIds":["onboarding"]}
+[2026-01-23T16:37:22.334Z] [app] [INFO] Webhook Handler: handleMessageCreated - User exists {"handler":"handleMessageCreated","userId":919899807889,"hasConversationId":true}
+[2026-01-23T16:37:22.334Z] [app] [INFO] Webhook Handler: handleMessageCreated - Calling processMessage {"handler":"handleMessageCreated","userId":919899807889,"messageBody":"I want to plan a date with my girlfriend","messageBodyLength":40}
+[2026-01-23T16:37:22.335Z] [app] [INFO] Process Message: Entry {"operation":"processMessage","userId":919899807889,"messageLength":40,"messagePreview":"I want to plan a date with my girlfriend"}
+[2026-01-23T16:37:22.335Z] [app] [INFO] Process Message: Getting OpenAI client {"operation":"processMessage","userId":919899807889,"hasClientInstance":true}
+[2026-01-23T16:37:22.335Z] [app] [INFO] Process Message: Routing message {"operation":"processMessage","userId":919899807889,"primarySDK":"openai","fallbackSDK":"xai"}
+[2026-01-23T16:37:22.335Z] [app] [INFO] Router: routeMessage - Entry {"operation":"routeMessage","userId":919899807889,"messageLength":40,"messagePreview":"I want to plan a date with my girlfriend","primarySDK":"openai","fallbackSDK":"xai","hasOpenAIClient":true}
+[2026-01-23T16:37:22.335Z] [app] [INFO] Router: routeMessage - Calling Master Agent {"operation":"routeMessage","userId":919899807889,"primarySDK":"openai"}
+[2026-01-23T16:37:22.335Z] [app] [INFO] Master Agent: Starting execution {"userId":919899807889,"messagePreview":"I want to plan a date with my girlfriend"}
+[2026-01-23T16:37:22.336Z] [app] [INFO] Tool: getConversationHistory - Entry {"tool":"get_conversation_history","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:37:22.336Z] [app] [INFO] Tool: getConversationHistory - Fetching conversation items {"tool":"get_conversation_history","userId":919899807889,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361"}
+[2026-01-23T16:37:23.111Z] [app] [INFO] Tool: getConversationHistory - Exit {"tool":"get_conversation_history","userId":919899807889,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","totalItems":82,"messageCount":17,"userMessageCount":16,"assistantMessageCount":0,"systemMessageCount":1}
+[2026-01-23T16:37:23.111Z] [app] [INFO] Memory Manager: getLongTermMemory - Entry {"operation":"getLongTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:37:23.111Z] [app] [INFO] Memory Manager: getLongTermMemory - Exit {"operation":"getLongTermMemory","userId":919899807889,"hasPersona":true,"personaKeys":["age","gender","planning_behavior","social_behavior","preferences"]}
+[2026-01-23T16:37:23.111Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:37:23.111Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:37:23.112Z] [app] [INFO] Conversation Manager: ensureConversation - Entry {"operation":"ensureConversation","userId":919899807889,"createUserIfNotExists":false,"allowMissingUser":true,"agentName":"master","isMasterAgent":true,"hasAgentPrompt":true,"hasUserObject":true}
+[2026-01-23T16:37:23.112Z] [app] [INFO] Conversation Manager: ensureConversation - Exit (existing conversation) {"operation":"ensureConversation","userId":919899807889,"agentName":"master","conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","isMasterAgent":true}
+[2026-01-23T16:37:23.637Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":1,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[{"role":"user","content":[{"type":"input_text","text":"I want to plan a date with my girlfriend","textLength":40}]}],"inputLength":40,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[{"type":"message","role":"user","content":[{"type":"input_text","text":"I want to plan a date with my girlfriend"}]}],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:37:26.693Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":1,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":2,"hasToolCalls":true,"toolCalls":[{"name":"invoke_planning_agent","call_id":"call_i1TNidQFiHo6p1cn7zNBak4S","arguments":"{\"user_id\":919899807889,\"message\":\"I want to plan a date with my girlfriend\"}"}]}
+[2026-01-23T16:37:26.693Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":1,"toolCalls":[{"name":"invoke_planning_agent","call_id":"call_i1TNidQFiHo6p1cn7zNBak4S","arguments":"{\"user_id\":919899807889,\"message\":\"I want to plan a date with my girlfriend\"}"}]}
+[2026-01-23T16:37:26.693Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":1,"toolName":"invoke_planning_agent","toolCallId":"call_i1TNidQFiHo6p1cn7zNBak4S","arguments":"{\"user_id\":919899807889,\"message\":\"I want to plan a date with my girlfriend\"}"}
+[2026-01-23T16:37:26.693Z] [app] [INFO] Master Agent: Invoking sub-agent {"agent":"master","userId":919899807889,"iteration":1,"subAgentTool":"invoke_planning_agent","arguments":"{\"user_id\":919899807889,\"message\":\"I want to plan a date with my girlfriend\"}"}
+[2026-01-23T16:37:26.694Z] [app] [INFO] Sub-Agent Input (Planning) {"agent":"planning","userId":919899807889,"message":"I want to plan a date with my girlfriend","messageLength":40,"invokedBy":"master","hasLongTermMemory":true,"hasShortTermMemory":true}
+[2026-01-23T16:37:26.694Z] [app] [INFO] Sub-Agent Output (Planning) {"agent":"planning","userId":919899807889,"response":"Planning Agent is not yet implemented.","responseLength":38}
+[2026-01-23T16:37:26.695Z] [app] [INFO] Master Agent: Sub-agent invocation completed {"agent":"master","userId":919899807889,"iteration":1,"subAgent":"planning","resultType":"object","hasResponse":true}
+[2026-01-23T16:37:26.695Z] [app] [INFO] Master Agent: Received Sub-Agent Result (planning) {"agent":"master","subAgent":"planning","userId":919899807889,"responseLength":38,"response":"Planning Agent is not yet implemented."}
+[2026-01-23T16:37:26.695Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Entry {"operation":"mergeShortTermMemory","userId":919899807889,"updateKeys":["activeAgent"],"activeAgent":"planning","hasCurrentPlan":false,"hasConversationContext":false,"hasUserObject":true}
+[2026-01-23T16:37:26.695Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:37:26.695Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:37:26.695Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Current state retrieved {"operation":"mergeShortTermMemory","userId":919899807889,"hasCurrent":true,"currentActiveAgent":null}
+[2026-01-23T16:37:26.695Z] [app] [INFO] Memory Manager: updateShortTermMemory - Entry {"operation":"updateShortTermMemory","userId":919899807889,"activeAgent":"planning","hasCurrentPlan":true,"hasConversationContext":true,"stateKeys":["currentPlan","conversationContext","activeAgent"]}
+[2026-01-23T16:37:26.695Z] [app] [INFO] Database: updateUser - Entry {"operation":"updateUser","userId":919899807889,"updateFields":["short_term_memory_json"],"hasName":false,"hasBio":false,"hasPersona":false,"hasShortTermMemory":true,"hasLocalityId":false,"hasConversationId":false,"hasAgentConversationIds":false}
+[2026-01-23T16:37:26.696Z] [app] [INFO] Database: updateUser - Executing query {"operation":"updateUser","userId":919899807889,"fieldCount":2,"fields":["short_term_memory_json","updated_at"]}
+[2026-01-23T16:37:26.700Z] [app] [INFO] Database: updateUser - Exit {"operation":"updateUser","userId":919899807889,"updatedAt":"2026-01-23T16:37:26.696Z","fieldsUpdated":2}
+[2026-01-23T16:37:26.700Z] [app] [INFO] Memory Manager: updateShortTermMemory - Exit {"operation":"updateShortTermMemory","userId":919899807889,"activeAgent":"planning","memoryUpdated":true}
+[2026-01-23T16:37:26.700Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Exit {"operation":"mergeShortTermMemory","userId":919899807889,"mergedActiveAgent":"planning","memoryMerged":true}
+[2026-01-23T16:37:26.700Z] [app] [INFO] Master Agent: Tool result prepared {"agent":"master","userId":919899807889,"iteration":1,"toolName":"invoke_planning_agent","resultLength":72,"resultPreview":"{\"agent\":\"planning\",\"response\":\"Planning Agent is not yet implemented.\"}"}
+[2026-01-23T16:37:26.701Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":1,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":1}
+[2026-01-23T16:37:27.343Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":2,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:37:29.369Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":2,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"","outputTextLength":0,"outputItemCount":1,"hasToolCalls":true,"toolCalls":[{"name":"update_short_term_memory","call_id":"call_MBcvRSv3bE4gVlOximV0Wb5p","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:37:29.369Z] [app] [INFO] Master Agent: Executing 1 tool call(s) {"agent":"master","userId":919899807889,"iteration":2,"toolCalls":[{"name":"update_short_term_memory","call_id":"call_MBcvRSv3bE4gVlOximV0Wb5p","arguments":"{\"user_id\":919899807889}"}]}
+[2026-01-23T16:37:29.369Z] [app] [INFO] Master Agent: Executing tool call {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_short_term_memory","toolCallId":"call_MBcvRSv3bE4gVlOximV0Wb5p","arguments":"{\"user_id\":919899807889}"}
+[2026-01-23T16:37:29.369Z] [app] [INFO] Master Agent: Executing regular tool {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_short_term_memory"}
+[2026-01-23T16:37:29.369Z] [app] [INFO] Tool Executor: executeTool - Entry {"executor":"executeTool","toolName":"update_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","hasOpenAIClient":true}
+[2026-01-23T16:37:29.370Z] [app] [ERROR] Tool Executor: executeTool - Exit (Error) {"executor":"executeTool","toolName":"update_short_term_memory","userId":919899807889,"args":"{\"user_id\":919899807889}","error":{"name":"TypeError","message":"Cannot read properties of undefined (reading 'activeAgent')","stack":"TypeError: Cannot read properties of undefined (reading 'activeAgent')\n    at updateShortTermMemoryTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:238:25)\n    at executeTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:535:24)\n    at customExecuteTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:128:20)\n    at executeMasterAgentWithSubAgents (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:509:32)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async executeMasterAgent (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:134:22)\n    at async routeMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/router.ts:63:22)\n    at async processMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/index.ts:65:22)\n    at async handleMessageCreated (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:335:22)\n    at async routeWebhookEvent (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:558:5)"}}
+[2026-01-23T16:37:29.371Z] [app] [ERROR] Master Agent: Tool execution failed {"agent":"master","userId":919899807889,"iteration":2,"toolName":"update_short_term_memory","toolCallId":"call_MBcvRSv3bE4gVlOximV0Wb5p","arguments":"{\"user_id\":919899807889}","error":{"name":"TypeError","message":"Cannot read properties of undefined (reading 'activeAgent')","stack":"TypeError: Cannot read properties of undefined (reading 'activeAgent')\n    at updateShortTermMemoryTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:238:25)\n    at executeTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/tools/userTools.ts:535:24)\n    at customExecuteTool (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:128:20)\n    at executeMasterAgentWithSubAgents (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:509:32)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async executeMasterAgent (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/agents/masterAgent.ts:134:22)\n    at async routeMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/router.ts:63:22)\n    at async processMessage (/home/ubuntu/whatsapp-bot/src/ai/openai/conversation/index.ts:65:22)\n    at async handleMessageCreated (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:335:22)\n    at async routeWebhookEvent (/home/ubuntu/whatsapp-bot/src/handlers/webhookEventHandlers.ts:558:5)"}}
+[2026-01-23T16:37:29.371Z] [app] [INFO] Master Agent: All tool calls completed {"agent":"master","userId":919899807889,"iteration":2,"toolCallCount":1,"toolResultCount":1,"subAgentResponsesCount":1}
+[2026-01-23T16:37:30.155Z] [app] [INFO] LLM Input (Master Agent) {"agent":"master","userId":919899807889,"iteration":3,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","model":"gpt-5-mini","input":[],"inputLength":0,"hasTools":true,"toolCount":10,"toolNames":["fetch_user","update_user","get_conversation_history","get_short_term_memory","update_short_term_memory","update_user_persona","fetch_activity_venue_maps","invoke_onboarding_agent","invoke_planning_agent","invoke_summary_agent"],"reasoning":{"effort":"low"},"fullRequest":{"model":"gpt-5-mini","conversation":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","input":[],"tools":[{"name":"fetch_user","description":"Fetch user information from database by user ID"},{"name":"update_user","description":"Update user information in the database"},{"name":"get_conversation_history","description":"Get the full conversation history for a user"},{"name":"get_short_term_memory","description":"Get short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_short_term_memory","description":"Update short-term memory (current plan, active agent, conversation context) for a user"},{"name":"update_user_persona","description":"Update user persona JSON in the database"},{"name":"fetch_activity_venue_maps","description":"Fetch activity venue maps happening at a given date and time in the same city as the user"},{"name":"invoke_onboarding_agent","description":"Invoke the Onboarding Agent to collect user information and build persona. Use this when user needs onboarding or persona is incomplete."},{"name":"invoke_planning_agent","description":"Invoke the Planning Agent to help with planning activities and events. Use this when user wants to plan something or discuss going out."},{"name":"invoke_summary_agent","description":"Invoke the Summary Agent to summarize conversations or plans. Use this when user requests a summary."}],"reasoning":{"effort":"low"}}}
+[2026-01-23T16:37:34.948Z] [app] [INFO] LLM Output (Master Agent) {"agent":"master","userId":919899807889,"iteration":3,"conversationId":"conv_6973a06544b881958a3ce72760d203b5073c4c1c976f1361","outputText":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"this evening\", \"weekend\", etc.)\n- Budget? (cheap, moderate, splurge)\n- Vibe: romantic, fun & casual, adventurous, cozy at home?\n- Any must-have activities or avoidances? (dinner, movie, board games, loud bars, long drives)\n- Are you thinking in-Delhi (nearby) or willing to travel out of city?\n- Do y...","outputTextLength":700,"outputItemCount":1,"hasToolCalls":false,"toolCalls":[]}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Master Agent: repackageSubAgentResponse - Entry {"operation":"repackageSubAgentResponse","masterResponseLength":700,"masterResponsePreview":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"","subAgentCount":1,"subAgents":["planning"],"isFirstMessage":false}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Master Agent: repackageSubAgentResponse - Analysis {"operation":"repackageSubAgentResponse","isDirectForwarding":false,"masterLength":700,"subLength":38,"responsesMatch":false,"masterContainsSub":false}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Master Agent: repackageSubAgentResponse - Exit (Using Master Response) {"operation":"repackageSubAgentResponse","finalLength":700,"finalPreview":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"","reason":"master_properly_repackaged"}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Master Agent: Repackaged Sub-Agent Response {"agent":"master","userId":919899807889,"subAgents":["planning"],"originalResponseLength":700,"repackagedResponseLength":700,"repackagedResponse":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"this evening\", \"weekend\", etc.)\n- Budget? (cheap, moderate, splurge)\n- Vibe: romantic, fun & casual, adventurous, cozy at home?\n- Any must-have activities or avoidances? (dinner, movie, board games, loud bars, long drives)\n- Are you thinking in-Delhi (nearby) or willing to travel out of city?\n- Do y...","wasModified":false}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Entry {"operation":"mergeShortTermMemory","userId":919899807889,"updateKeys":["conversationContext"],"activeAgent":null,"hasCurrentPlan":false,"hasConversationContext":true,"hasUserObject":true}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Memory Manager: getShortTermMemory - Entry {"operation":"getShortTermMemory","userId":919899807889,"hasUserObject":true}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Memory Manager: getShortTermMemory - Exit {"operation":"getShortTermMemory","userId":919899807889,"hasMemory":true,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Current state retrieved {"operation":"mergeShortTermMemory","userId":919899807889,"hasCurrent":true,"currentActiveAgent":null}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Memory Manager: updateShortTermMemory - Entry {"operation":"updateShortTermMemory","userId":919899807889,"activeAgent":null,"hasCurrentPlan":true,"hasConversationContext":true,"stateKeys":["currentPlan","conversationContext"]}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Database: updateUser - Entry {"operation":"updateUser","userId":919899807889,"updateFields":["short_term_memory_json"],"hasName":false,"hasBio":false,"hasPersona":false,"hasShortTermMemory":true,"hasLocalityId":false,"hasConversationId":false,"hasAgentConversationIds":false}
+[2026-01-23T16:37:34.948Z] [app] [INFO] Database: updateUser - Executing query {"operation":"updateUser","userId":919899807889,"fieldCount":2,"fields":["short_term_memory_json","updated_at"]}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Database: updateUser - Exit {"operation":"updateUser","userId":919899807889,"updatedAt":"2026-01-23T16:37:34.948Z","fieldsUpdated":2}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Memory Manager: updateShortTermMemory - Exit {"operation":"updateShortTermMemory","userId":919899807889,"memoryUpdated":true}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Memory Manager: mergeShortTermMemory - Exit {"operation":"mergeShortTermMemory","userId":919899807889,"memoryMerged":true}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Master Agent: repackageSubAgentResponse - Entry {"operation":"repackageSubAgentResponse","masterResponseLength":700,"masterResponsePreview":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"","subAgentCount":1,"subAgents":["planning"],"isFirstMessage":false}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Master Agent: repackageSubAgentResponse - Analysis {"operation":"repackageSubAgentResponse","isDirectForwarding":false,"masterLength":700,"subLength":38,"responsesMatch":false,"masterContainsSub":false}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Master Agent: repackageSubAgentResponse - Exit (Using Master Response) {"operation":"repackageSubAgentResponse","finalLength":700,"finalPreview":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"","reason":"master_properly_repackaged"}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Master Agent: Completed execution {"userId":919899807889,"responsePreview":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can s"}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Router: routeMessage - Exit (Success) {"operation":"routeMessage","userId":919899807889,"responseLength":700,"responsePreview":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"..."}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Process Message: Exit (Success) {"operation":"processMessage","userId":919899807889,"responseLength":700,"responsePreview":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"this evening\", \"weekend\", etc.)\n- Budget? (cheap, moderate, splurge)\n- Vibe: romantic, fun & casual, adventurous, cozy at home?\n- Any must-have activities or avoidances? (dinner, movie, board games, loud bars, long drives)\n- Are you thinking in-Delhi (nearby) or willing to travel out of city?\n- Do y..."}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Webhook Handler: handleMessageCreated - Received response from processMessage {"handler":"handleMessageCreated","userId":919899807889,"responseLength":700,"response":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"this evening\", \"weekend\", etc.)\n- Budget? (cheap, moderate, splurge)\n- Vibe: romantic, fun & casual, adventurous, cozy at home?\n- Any must-have activities or avoidances? (dinner, movie, board games, loud bars, long drives)\n- Are you thinking in-Delhi (nearby) or willing to travel out of city?\n- Do y..."}
+[2026-01-23T16:37:34.953Z] [app] [INFO] Webhook Handler: handleMessageCreated - Sending response via Periskope {"handler":"handleMessageCreated","userId":919899807889,"chatId":"919899807889@c.us","responseLength":700}
+[2026-01-23T16:37:35.073Z] [app] [INFO] Webhook Handler: handleMessageCreated - Response sent successfully {"handler":"handleMessageCreated","userId":919899807889,"chatId":"919899807889@c.us","responseLength":700}
+[2026-01-23T16:37:35.073Z] [app] [INFO] Webhook Handler: handleMessageCreated - Exit {"handler":"handleMessageCreated","userId":919899807889}
+[2026-01-23T16:37:35.073Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:37:35.287Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":2181}
+[2026-01-23T16:37:35.287Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":2181}
+[2026-01-23T16:37:35.287Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:37:35.287Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+[2026-01-23T16:37:35.287Z] [app] [INFO] Webhook Handler: handleMessageCreated - Entry {"handler":"handleMessageCreated","eventType":"message.created","eventData":{"hasData":true,"chatId":"919899807889@c.us","messageBody":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"this evening\", \"weekend\", etc.)\n- Budget? (cheap, moderate, splurge)\n- Vibe: romantic, fun & casual, adventurous, cozy at home?\n- Any must-have activities or avoidances? (dinner, movie, board games, loud bars, long drives)\n- Are you thinking in-Delhi (nearby) or willing to travel out of city?\n- Do you want me to invite people / message anyone, or just give a plan you can follow?\n\nTell me whatever you prefer and I’ll draft 3 tailored date options with times, locations, and a simple plan for each."}}
+[2026-01-23T16:37:35.287Z] [app] [INFO] Webhook Handler: handleMessageCreated - Extracted Data {"handler":"handleMessageCreated","chatId":"919899807889@c.us","messageBody":"Got it — you want to plan a date with your girlfriend. I’ll handle this.\n\nQuick questions so I can suggest something great (pick as many as make sense):\n- When would you like the date? (date/time or \"...","messageBodyLength":700,"hasBotPhoneNumber":true}
+[2026-01-23T16:37:35.287Z] [app] [INFO] Webhook Handler: handleMessageCreated - Bot message detected (from_me) {"handler":"handleMessageCreated","chatId":"919899807889@c.us","reason":"from_me=true"}
+[2026-01-23T16:37:35.287Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:37:36.000Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":2277}
+[2026-01-23T16:37:36.001Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":2277}
+[2026-01-23T16:37:36.001Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:37:36.001Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+Event Type: message.ack.updated received
+[2026-01-23T16:37:36.001Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}
+[2026-01-23T16:37:36.015Z] [app] [INFO] Route: POST /webhook - Entry {"route":"/webhook","method":"POST","hasSignature":true,"bodyLength":2277}
+[2026-01-23T16:37:36.015Z] [app] [INFO] Route: POST /webhook - Verifying signature {"route":"/webhook","hasSignature":true,"bodyLength":2277}
+[2026-01-23T16:37:36.015Z] [app] [INFO] Route: POST /webhook - Signature verification result {"route":"/webhook","isValid":true}
+[2026-01-23T16:37:36.015Z] [app] [INFO] Route: POST /webhook - Event parsed, routing {"route":"/webhook","eventType":"unknown","hasData":true}
+Event Type: message.ack.updated received
+[2026-01-23T16:37:36.015Z] [app] [INFO] Route: POST /webhook - Event routed successfully {"route":"/webhook","eventType":"unknown"}

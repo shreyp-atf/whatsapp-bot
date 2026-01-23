@@ -28,53 +28,91 @@ import {
 } from '../types/webhook';
 import { getUserById, createUser, isOneOnOneChat, extractUserIdFromChatId } from '../db/user';
 import { periskopeClient } from '../services/periskope';
-import { conversationAgent } from '../ai/conversationAgent';
+import { processMessage } from '../ai/openai/conversation';
+import { logger } from '../utils/logging';
 
 /**
  * Handle chat.created event
  * If chat_id ends in @c.us, it's a 1:1 chat, and we should initialize a profile for the user
+ * This is the SINGLE SOURCE OF TRUTH for user creation - users are created here when chats are created
  */
 export async function handleChatCreated(event: ChatCreatedEvent | WebhookEvent): Promise<void> {
-  console.log('Event Type: chat.created received');
+  logger.info('Webhook Handler: handleChatCreated - Entry', {
+    handler: 'handleChatCreated',
+    eventType: 'chat.created',
+  });
   
   const chatId = event.data?.chat_id || event.data?.chat?.id || (event as any).chat_id || (event as any).chat?.id;
   const chatName = event.data?.chat?.name || event.data?.name || (event as any).chat?.name || 'Unknown';
   
-  console.log(`  Chat ID: ${chatId}`);
-  console.log(`  Chat Name: ${chatName}`);
+  logger.info('Webhook Handler: handleChatCreated - Extracted Data', {
+    handler: 'handleChatCreated',
+    chatId,
+    chatName,
+  });
   
   // Check if this is a 1:1 chat (ends with @c.us)
   if (chatId && isOneOnOneChat(chatId)) {
     const userId = extractUserIdFromChatId(chatId);
     
     if (userId) {
-      console.log(`  Detected 1:1 chat for user ID: ${userId}`);
+      logger.info('Webhook Handler: handleChatCreated - Detected 1:1 chat', {
+        handler: 'handleChatCreated',
+        userId,
+        chatId,
+      });
       
       // Check if user already exists
       const existingUser = await getUserById(userId);
       
       if (!existingUser) {
-        // Initialize a profile for the user
-        console.log(`  Creating new user profile for user ID: ${userId}`);
+        // Initialize a profile for the user with minimal data (just user_id)
+        logger.info('Webhook Handler: handleChatCreated - Creating new user', {
+          handler: 'handleChatCreated',
+          userId,
+        });
+        
         try {
           const newUser = await createUser({
             user_id: userId,
-            name: chatName !== 'Unknown' ? chatName : null,
           });
-          console.log(`  ✓ User profile created: ${newUser.user_id}`);
+          
+          logger.info('Webhook Handler: handleChatCreated - User created successfully', {
+            handler: 'handleChatCreated',
+            userId: newUser.user_id,
+            createdAt: newUser.created_at,
+          });
         } catch (error) {
-          console.error(`  ✗ Error creating user profile:`, error);
+          logger.error('Webhook Handler: handleChatCreated - Error creating user', error instanceof Error ? error : new Error(String(error)), {
+            handler: 'handleChatCreated',
+            userId,
+            chatId,
+          });
           throw error;
         }
       } else {
-        console.log(`  User profile already exists for user ID: ${userId}`);
+        logger.info('Webhook Handler: handleChatCreated - User already exists', {
+          handler: 'handleChatCreated',
+          userId,
+        });
       }
     } else {
-      console.log(`  Could not extract user ID from chat_id: ${chatId}`);
+      logger.warn('Webhook Handler: handleChatCreated - Could not extract user ID', {
+        handler: 'handleChatCreated',
+        chatId,
+      });
     }
   } else {
-    console.log(`  Not a 1:1 chat (chat_id: ${chatId}), skipping user initialization`);
+    logger.info('Webhook Handler: handleChatCreated - Not a 1:1 chat, skipping', {
+      handler: 'handleChatCreated',
+      chatId,
+      isOneOnOne: false,
+    });
   }
+  
+  logger.info('Webhook Handler: handleChatCreated - Exit', {
+    handler: 'handleChatCreated',
+  });
 }
 
 /**
@@ -87,23 +125,45 @@ export async function handleChatNotificationCreated(event: ChatNotificationCreat
 
 /**
  * Handle message.created event
- * Processes incoming messages and responds using the conversation agent
+ * Processes incoming messages and responds using the master agent (which routes to appropriate agents)
  */
 export async function handleMessageCreated(event: MessageCreatedEvent | WebhookEvent): Promise<void> {
-  console.log('Event Type: message.created received');
+  logger.info('Webhook Handler: handleMessageCreated - Entry', {
+    handler: 'handleMessageCreated',
+    eventType: 'message.created',
+    eventData: {
+      hasData: !!event.data,
+      chatId: event.data?.chat_id || event.data?.message?.chat_id || (event as any).chat_id || null,
+      messageBody: event.data?.message?.body || event.data?.body || (event as any).message?.body || null,
+    },
+  });
   
   // Extract chat_id and message content from the event
   const chatId = event.data?.chat_id || event.data?.message?.chat_id || (event as any).chat_id || (event as any).data?.chat?.id;
   const messageBody = event.data?.message?.body || event.data?.body || (event as any).message?.body || (event as any).body;
   const botPhoneNumber = process.env.PERISKOPE_PHONE_NUMBER;
   
+  logger.info('Webhook Handler: handleMessageCreated - Extracted Data', {
+    handler: 'handleMessageCreated',
+    chatId,
+    messageBody: messageBody?.substring(0, 200) + (messageBody && messageBody.length > 200 ? '...' : ''),
+    messageBodyLength: messageBody?.length || 0,
+    hasBotPhoneNumber: !!botPhoneNumber,
+  });
+  
   if (!chatId) {
-    console.log('  No chat_id found in event, skipping message processing');
+    logger.warn('Webhook Handler: handleMessageCreated - No chat_id found', {
+      handler: 'handleMessageCreated',
+      eventData: Object.keys(event),
+    });
     return;
   }
   
   if (!messageBody) {
-    console.log('  No message body found in event, skipping message processing');
+    logger.warn('Webhook Handler: handleMessageCreated - No message body found', {
+      handler: 'handleMessageCreated',
+      chatId,
+    });
     return;
   }
   
@@ -116,13 +176,23 @@ export async function handleMessageCreated(event: MessageCreatedEvent | WebhookE
   
   // Method 1: Check from_me field (most reliable)
   if (fromMe === true) {
-    console.log('  Message is from bot itself (from_me=true), skipping to avoid infinite loop');
+    logger.info('Webhook Handler: handleMessageCreated - Bot message detected (from_me)', {
+      handler: 'handleMessageCreated',
+      chatId,
+      reason: 'from_me=true',
+    });
     return;
   }
   
   // Method 2: Check if sender_phone matches org_phone (indicates bot sent it)
   if (senderPhone && orgPhone && senderPhone === orgPhone) {
-    console.log('  Message sender matches org_phone, skipping to avoid infinite loop');
+    logger.info('Webhook Handler: handleMessageCreated - Bot message detected (sender matches org)', {
+      handler: 'handleMessageCreated',
+      chatId,
+      reason: 'sender_phone matches org_phone',
+      senderPhone,
+      orgPhone,
+    });
     return;
   }
   
@@ -131,7 +201,13 @@ export async function handleMessageCreated(event: MessageCreatedEvent | WebhookE
     const normalizedSender = senderPhone.replace('@c.us', '').replace(/[+\s-]/g, '');
     const normalizedBot = botPhoneNumber.replace('@c.us', '').replace(/[+\s-]/g, '');
     if (normalizedSender === normalizedBot) {
-      console.log('  Message sender matches PERISKOPE_PHONE_NUMBER, skipping to avoid infinite loop');
+      logger.info('Webhook Handler: handleMessageCreated - Bot message detected (sender matches bot number)', {
+        handler: 'handleMessageCreated',
+        chatId,
+        reason: 'sender_phone matches PERISKOPE_PHONE_NUMBER',
+        senderPhone,
+        botPhoneNumber,
+      });
       return;
     }
   }
@@ -141,58 +217,170 @@ export async function handleMessageCreated(event: MessageCreatedEvent | WebhookE
     const normalizedFrom = messageFrom.replace('@c.us', '').replace(/[+\s-]/g, '');
     const normalizedBot = botPhoneNumber.replace('@c.us', '').replace(/[+\s-]/g, '');
     if (normalizedFrom === normalizedBot) {
-      console.log('  Message is from bot itself (fallback check), skipping to avoid infinite loop');
+      logger.info('Webhook Handler: handleMessageCreated - Bot message detected (fallback check)', {
+        handler: 'handleMessageCreated',
+        chatId,
+        reason: 'messageFrom matches bot number',
+        messageFrom,
+        botPhoneNumber,
+      });
       return;
     }
   }
   
-  console.log(`  Chat ID: ${chatId}`);
-  console.log(`  Message: ${messageBody}`);
-  if (messageFrom) {
-    console.log(`  From: ${messageFrom}`);
-  }
+  logger.info('Webhook Handler: handleMessageCreated - Processing user message', {
+    handler: 'handleMessageCreated',
+    chatId,
+    messageBody: messageBody.substring(0, 200) + (messageBody.length > 200 ? '...' : ''),
+    messageBodyLength: messageBody.length,
+    messageFrom: messageFrom || null,
+  });
   
   // Only process 1:1 chats (not group chats)
   if (!isOneOnOneChat(chatId)) {
-    console.log('  Not a 1:1 chat, skipping conversation agent processing');
+    logger.info('Webhook Handler: handleMessageCreated - Not a 1:1 chat, skipping', {
+      handler: 'handleMessageCreated',
+      chatId,
+      isOneOnOne: false,
+    });
     return;
   }
   
   // Extract user ID from chat_id
   const userId = extractUserIdFromChatId(chatId);
   if (!userId) {
-    console.log(`  Could not extract user ID from chat_id: ${chatId}`);
+    logger.warn('Webhook Handler: handleMessageCreated - Could not extract user ID', {
+      handler: 'handleMessageCreated',
+      chatId,
+    });
     return;
   }
   
-  console.log(`  User ID: ${userId}`);
+  logger.info('Webhook Handler: handleMessageCreated - Extracted User ID', {
+    handler: 'handleMessageCreated',
+    chatId,
+    userId,
+  });
   
   try {
-    // Step 1: Ensure user exists (create if needed)
+    // Users should already exist from chat.created event
+    // If user doesn't exist, this indicates a race condition (message.created arrived before chat.created)
+    // In this case, create the user as a fallback to handle the race condition gracefully
     let user = await getUserById(userId);
+    
+    // #region agent log
+    fetch('http://localhost:7245/ingest/75957693-e320-4792-b4f1-71ee9934f46b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'webhookEventHandlers.ts:268',message:'User lookup result',data:{userId,userExists:!!user,chatId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
+    
     if (!user) {
-      console.log(`  Creating new user profile for user ID: ${userId}`);
-      user = await createUser({
-        user_id: userId,
+      logger.warn('Webhook Handler: handleMessageCreated - User does not exist (race condition detected)', {
+        handler: 'handleMessageCreated',
+        userId,
+        chatId,
+        message: 'message.created arrived before chat.created. Creating user as fallback.',
       });
-      console.log(`  ✓ User profile created: ${user.user_id}`);
+      
+      // #region agent log
+      fetch('http://localhost:7245/ingest/75957693-e320-4792-b4f1-71ee9934f46b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'webhookEventHandlers.ts:277',message:'Race condition detected, creating user',data:{userId,chatId},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      
+      // Create user as fallback to handle race condition
+      try {
+        user = await createUser({
+          user_id: userId,
+        });
+        
+        // #region agent log
+        fetch('http://localhost:7245/ingest/75957693-e320-4792-b4f1-71ee9934f46b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'webhookEventHandlers.ts:285',message:'User created successfully as fallback',data:{userId,userCreated:true},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+        // #endregion
+        
+        logger.info('Webhook Handler: handleMessageCreated - User created as fallback', {
+          handler: 'handleMessageCreated',
+          userId: user.user_id,
+          chatId,
+        });
+      } catch (createError) {
+        logger.error('Webhook Handler: handleMessageCreated - Error creating user fallback', createError instanceof Error ? createError : new Error(String(createError)), {
+          handler: 'handleMessageCreated',
+          userId,
+          chatId,
+        });
+        // If creation fails (e.g., duplicate key), try fetching again
+        user = await getUserById(userId);
+        if (!user) {
+          // Still no user, can't proceed
+          return;
+        }
+      }
     }
     
-    // Step 2 & 3: Send message to conversation agent and get response
-    console.log('  Sending message to conversation agent...');
-    const response = await conversationAgent.sendMessage(userId, messageBody);
-    console.log(`  ✓ Received response from conversation agent: ${response}`);
+    logger.info('Webhook Handler: handleMessageCreated - User exists', {
+      handler: 'handleMessageCreated',
+      userId,
+      hasConversationId: !!user.conversation_id,
+    });
+    
+    // #region agent log
+    fetch('http://localhost:7245/ingest/75957693-e320-4792-b4f1-71ee9934f46b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'webhookEventHandlers.ts:295',message:'About to call processMessage',data:{userId,hasUser:!!user,messageLength:messageBody.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
+    
+    // Send message to master agent (which routes to appropriate agents) and get response
+    logger.info('Webhook Handler: handleMessageCreated - Calling processMessage', {
+      handler: 'handleMessageCreated',
+      userId,
+      messageBody: messageBody.substring(0, 200) + (messageBody.length > 200 ? '...' : ''),
+      messageBodyLength: messageBody.length,
+    });
+    
+    const response = await processMessage(user, messageBody);
+    
+    // #region agent log
+    fetch('http://localhost:7245/ingest/75957693-e320-4792-b4f1-71ee9934f46b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'webhookEventHandlers.ts:302',message:'processMessage returned successfully',data:{userId,responseLength:response.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
+    
+    logger.info('Webhook Handler: handleMessageCreated - Received response from processMessage', {
+      handler: 'handleMessageCreated',
+      userId,
+      responseLength: response.length,
+      response: response.substring(0, 500) + (response.length > 500 ? '...' : ''),
+    });
     
     // Step 4: Send response back to user via Periskope
-    console.log('  Sending response via Periskope...');
+    logger.info('Webhook Handler: handleMessageCreated - Sending response via Periskope', {
+      handler: 'handleMessageCreated',
+      userId,
+      chatId,
+      responseLength: response.length,
+    });
+    
     await periskopeClient.sendMessage(chatId, response);
-    console.log(`  ✓ Response sent successfully`);
+    
+    logger.info('Webhook Handler: handleMessageCreated - Response sent successfully', {
+      handler: 'handleMessageCreated',
+      userId,
+      chatId,
+      responseLength: response.length,
+    });
     
   } catch (error) {
-    console.error('  ✗ Error processing message:', error);
+    // #region agent log
+    fetch('http://localhost:7245/ingest/75957693-e320-4792-b4f1-71ee9934f46b',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'webhookEventHandlers.ts:321',message:'Error in handleMessageCreated',data:{userId,chatId,errorMessage:error instanceof Error ? error.message : String(error),errorStack:error instanceof Error ? error.stack : undefined},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+    // #endregion
+    
+    logger.error('Webhook Handler: handleMessageCreated - Error processing message', error instanceof Error ? error : new Error(String(error)), {
+      handler: 'handleMessageCreated',
+      userId,
+      chatId,
+      messageBody: messageBody?.substring(0, 200),
+    });
     // Don't throw - we want to continue processing other webhooks even if one fails
     // Optionally, you could send an error message to the user here
   }
+  
+  logger.info('Webhook Handler: handleMessageCreated - Exit', {
+    handler: 'handleMessageCreated',
+    userId,
+  });
 }
 
 /**

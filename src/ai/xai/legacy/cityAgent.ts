@@ -5,13 +5,13 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { CityRowSchema, type CityRow } from '../utils/schemas';
+import { CityRowSchema, type CityRow } from '../../utils/schemas';
 import {
   getCityExtractionPrompt,
   getCityExtractionUserMessage
-} from '../utils/extractionPrompts';
-import { getCityByNameAndCountry, createCity } from '../../db/city';
-import { logger } from '../utils/logging';
+} from '../../utils/extractionPrompts';
+import { getCityByNameAndCountry, createCity } from '../../../db/city';
+import { logger } from '../../utils/logging';
 
 export interface CityAgentInput {
   url: string;

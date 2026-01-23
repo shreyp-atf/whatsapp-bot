@@ -5,13 +5,13 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { ActivityRowSchema, type ActivityRow } from '../utils/schemas';
+import { ActivityRowSchema, type ActivityRow } from '../../utils/schemas';
 import {
   getActivityExtractionPrompt,
   getActivityExtractionUserMessage
-} from '../utils/extractionPrompts';
-import { getAllActivities, searchActivitiesByName, createActivity } from '../../db/activity';
-import { logger } from '../utils/logging';
+} from '../../utils/extractionPrompts';
+import { getAllActivities, searchActivitiesByName, createActivity } from '../../../db/activity';
+import { logger } from '../../utils/logging';
 
 export interface ActivityAgentInput {
   url: string;

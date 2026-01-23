@@ -7,9 +7,8 @@
 
 import OpenAI from 'openai';
 import { routeMessage } from './router';
-import { executePersonaExtractionAgent } from './agents/personaExtractionAgent';
-import { updateUserPersona } from './tools/userTools';
 import { logger } from '../../utils/logging';
+import { User } from '../../../types/database';
 
 let openaiClientInstance: OpenAI | null = null;
 
@@ -32,78 +31,62 @@ function getOpenAIClient(): OpenAI {
 /**
  * Process a user message through the agent system
  * 
- * @param userId - The user ID (contact number)
+ * @param user - The user object (fetched once at entry point)
  * @param message - The user's message
  * @returns The agent's response string (caller is responsible for sending to user)
  */
 export async function processMessage(
-  userId: number,
+  user: User,
   message: string
 ): Promise<string> {
-  logger.info('processMessage: Starting', {
-    userId,
-    messagePreview: message.substring(0, 100),
+  logger.info('Process Message: Entry', {
+    operation: 'processMessage',
+    userId: user.user_id,
+    messageLength: message.length,
+    messagePreview: message.substring(0, 200) + (message.length > 200 ? '...' : ''),
   });
 
   try {
+    logger.info('Process Message: Getting OpenAI client', {
+      operation: 'processMessage',
+      userId: user.user_id,
+      hasClientInstance: !!openaiClientInstance,
+    });
+    
     const client = getOpenAIClient();
     
-    const response = await routeMessage(userId, message, {
+    logger.info('Process Message: Routing message', {
+      operation: 'processMessage',
+      userId: user.user_id,
+      primarySDK: 'openai',
+      fallbackSDK: 'xai',
+    });
+    
+    const response = await routeMessage(user, message, {
       primarySDK: 'openai',
       fallbackSDK: 'xai', // Placeholder for future xAI implementation
       openaiClient: client,
     });
 
-    logger.info('processMessage: Completed', {
-      userId,
-      responsePreview: response.substring(0, 100),
+    logger.info('Process Message: Exit (Success)', {
+      operation: 'processMessage',
+      userId: user.user_id,
+      responseLength: response.length,
+      responsePreview: response.substring(0, 500) + (response.length > 500 ? '...' : ''),
     });
 
     return response;
   } catch (error) {
-    logger.error('processMessage: Failed', error instanceof Error ? error : new Error(String(error)), {
-      userId,
+    logger.error('Process Message: Exit (Error)', error instanceof Error ? error : new Error(String(error)), {
+      operation: 'processMessage',
+      userId: user.user_id,
+      messageLength: message.length,
     });
     throw error;
   }
 }
 
-/**
- * Extract user persona from conversation history
- * 
- * @param userId - The user ID
- * @returns The extracted persona
- */
-export async function extractPersona(userId: number): Promise<any> {
-  logger.info('extractPersona: Starting', {
-    userId,
-  });
-
-  try {
-    const client = getOpenAIClient();
-    
-    const result = await executePersonaExtractionAgent(client, userId);
-
-    // Update user persona in database
-    await updateUserPersona(userId, result.persona);
-
-    logger.info('extractPersona: Completed', {
-      userId,
-      personaKeys: Object.keys(result.persona),
-    });
-
-    return result;
-  } catch (error) {
-    logger.error('extractPersona: Failed', error instanceof Error ? error : new Error(String(error)), {
-      userId,
-    });
-    throw error;
-  }
-}
 
 // Export agent functions for direct access if needed
 export { executeMasterAgent } from './agents/masterAgent';
 export { executeOnboardingAgent } from './agents/onboardingAgent';
-export { executePlanningAgent } from './agents/planningAgent';
-export { executeOutOfScopeAgent } from './agents/outOfScopeAgent';
-export { executePersonaExtractionAgent } from './agents/personaExtractionAgent';

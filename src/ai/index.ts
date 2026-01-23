@@ -44,7 +44,7 @@ export class AIClient {
       apiKey: apiKey,
     });
 
-    this.defaultModel = config?.model || 'gpt-3.5-turbo';
+    this.defaultModel = config?.model || 'gpt-5-mini';
   }
 
   /**

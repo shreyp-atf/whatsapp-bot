@@ -5,14 +5,14 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { VenueRowSchema, type VenueRow } from '../utils/schemas';
+import { VenueRowSchema, type VenueRow } from '../../utils/schemas';
 import {
   getVenueFromUrlExtractionPrompt,
   getVenueFromUrlExtractionUserMessage
-} from '../utils/extractionPrompts';
-import { createVenue, getAllVenues } from '../../db/venue';
+} from '../../utils/extractionPrompts';
+import { createVenue, getAllVenues } from '../../../db/venue';
 import { findClosestVenueMatch } from '../similarityAgent';
-import { logger } from '../utils/logging';
+import { logger } from '../../utils/logging';
 
 export interface VenueAgentInput {
   url: string;

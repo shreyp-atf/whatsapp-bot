@@ -9,8 +9,10 @@ export interface User {
   name: string | null;
   bio: string | null;
   persona_json: any | null;
+  short_term_memory_json: any | null;
   locality_id: number | null;
   conversation_id: string | null;
+  agent_conversation_ids: { [agentName: string]: string } | null;
 }
 
 export interface Group {
@@ -49,8 +51,10 @@ export interface CreateUserInput {
   name?: string | null;
   bio?: string | null;
   persona_json?: any | null;
+  short_term_memory_json?: any | null;
   locality_id?: number | null;
   conversation_id?: string | null;
+  agent_conversation_ids?: { [agentName: string]: string } | null;
 }
 
 export interface CreateActivityInput {

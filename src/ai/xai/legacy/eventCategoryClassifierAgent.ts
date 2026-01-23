@@ -11,9 +11,9 @@ import {
   type EventCategoryClassificationResult,
   EVENT_CATEGORIES,
   type EventCategory
-} from '../utils/schemas';
-import { getEventCategoryClassificationPrompt, getEventCategoryClassificationUserMessage } from '../utils/extractionPrompts';
-import { logger } from '../utils/logging';
+} from '../../utils/schemas';
+import { getEventCategoryClassificationPrompt, getEventCategoryClassificationUserMessage } from '../../utils/extractionPrompts';
+import { logger } from '../../utils/logging';
 
 // Re-export for convenience
 export { EVENT_CATEGORIES, type EventCategory };

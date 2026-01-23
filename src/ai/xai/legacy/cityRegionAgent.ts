@@ -5,14 +5,14 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { CityRegionRowSchema, type CityRegionRow } from '../utils/schemas';
+import { CityRegionRowSchema, type CityRegionRow } from '../../utils/schemas';
 import {
   getCityRegionExtractionPrompt,
   getCityRegionExtractionUserMessage
-} from '../utils/extractionPrompts';
-import { createCityRegion, getAllCityRegions } from '../../db/cityRegion';
+} from '../../utils/extractionPrompts';
+import { createCityRegion, getAllCityRegions } from '../../../db/cityRegion';
 import { findClosestCityRegionMatch } from '../similarityAgent';
-import { logger } from '../utils/logging';
+import { logger } from '../../utils/logging';
 
 export interface CityRegionAgentInput {
   url: string;

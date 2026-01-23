@@ -6,9 +6,9 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { EventLinkValidationSchema, type EventLinkValidationResult } from '../utils/schemas';
-import { getEventLinkValidationPrompt, getEventLinkValidationUserMessage } from '../utils/extractionPrompts';
-import { logger } from '../utils/logging';
+import { EventLinkValidationSchema, type EventLinkValidationResult } from '../../utils/schemas';
+import { getEventLinkValidationPrompt, getEventLinkValidationUserMessage } from '../../utils/extractionPrompts';
+import { logger } from '../../utils/logging';
 
 export interface EventLinkValidatorInput {
   url: string;

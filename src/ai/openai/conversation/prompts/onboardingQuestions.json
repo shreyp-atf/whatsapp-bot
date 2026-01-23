@@ -2,6 +2,7 @@
   {
     "id": "name",
     "question": "What's your name?",
+    "type": "text",
     "field": "name",
     "order": 1,
     "required": true,
@@ -10,17 +11,130 @@
   {
     "id": "location",
     "question": "Which city are you in?",
+    "type": "text",
     "field": "locality_id",
     "order": 2,
     "required": true,
     "validation": "locality-lookup"
   },
   {
-    "id": "preferences",
-    "question": "What kind of activities do you enjoy? (e.g., movies, restaurants, events, sports)",
-    "field": "preferences",
+    "id": "age",
+    "question": "How old are you?",
+    "type": "text",
+    "field": "age",
     "order": 3,
-    "required": false,
+    "required": true,
     "validation": "optional"
+  },
+  {
+    "id": "gender",
+    "question": "What is your gender?",
+    "type": "multiple-choice",
+    "field": "gender",
+    "order": 4,
+    "required": true,
+    "validation": "optional",
+    "options": [
+      {
+        "value": "male",
+        "label": "Male"
+      },
+      {
+        "value": "female",
+        "label": "Female"
+      },
+      {
+        "value": "non-binary",
+        "label": "Non-binary"
+      },
+      {
+        "value": "prefer-not-to-say",
+        "label": "Prefer not to say"
+      }
+    ]
+  },
+  {
+    "id": "planning_behavior",
+    "question": "What describes you best?",
+    "type": "multiple-choice",
+    "field": "planning_behavior",
+    "order": 5,
+    "required": true,
+    "validation": "optional",
+    "multiple": true,
+    "options": [
+      {
+        "value": "planner",
+        "label": "I plan days in advance"
+      },
+      {
+        "value": "impromptu",
+        "label": "Leaving in 15? No problem."
+      }    
+    ]
+  },
+  {
+    "id": "social_behavior",
+    "question": "How do you like to socialize?",
+    "type": "multiple-choice",
+    "field": "social_behavior",
+    "order": 6,
+    "required": true,
+    "validation": "optional",
+    "multiple": true,
+    "options": [
+      {
+        "value": "introvert",
+        "label": "I'm more of a homebody"
+      },
+      {
+        "value": "extrovert",
+        "label": "I love going out"
+      },
+      {
+        "value": "ambivert",
+        "label": "I can do both"
+      }
+    ]
+  },
+  {
+    "id": "preferences",
+    "question": "What would you always say yes to? It can be multiple.",
+    "type": "multiple-choice",
+    "field": "preferences",
+    "order": 7,
+    "required": true,
+    "validation": "optional",
+    "multiple": true,
+    "options": [
+      {
+        "value": "karaoke",
+        "label": "Karaoke"
+      },
+      {
+        "value": "bowling",
+        "label": "Bowling"
+      },
+      {
+        "value": "sports",
+        "label": "Playing a sport"
+      },
+      {
+        "value": "movies",
+        "label": "Watching a movie"
+      },
+      {
+        "value": "board_games",
+        "label": "Board games"
+      },
+      {
+        "value": "video_games",
+        "label": "Video games"
+      },
+      {
+        "value": "reading",
+        "label": "Reading"
+      }
+    ]
   }
 ]

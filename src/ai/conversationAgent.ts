@@ -14,6 +14,7 @@ import { User } from '../types/database';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 import { getActivityVenueMapsByCityAndDateTime } from '../db/activityVenueMap';
+import { logger } from '../utils/logging';
 
 export interface ConversationAgentConfig {
   apiKey?: string;
@@ -308,11 +309,20 @@ export class ConversationAgent {
     while (iteration < maxIterations) {
       iteration++;
 
-      // Create a response using the Responses API with conversation context and tools
-      const response = await this.client.responses.create({
-        model: options?.model || 'gpt-4o',
+      // OpenAI Responses API requires 'input' parameter on every call
+      // On first iteration, include the user message; on subsequent iterations (after tool calls), provide empty string
+      // Build request conditionally to satisfy both TypeScript types and API requirements
+      const requestParams: any = {
+        model: options?.model || 'gpt-5-mini',
         conversation: conversationId,
-        input: iteration === 1 ? [
+        tools: tools.length > 0 ? tools : undefined,
+        // temperature parameter removed - gpt-5-mini doesn't support it
+        reasoning: { effort: 'low' },
+      };
+
+      if (iteration === 1) {
+        // First iteration: include user message as input
+        requestParams.input = [
           {
             type: 'message',
             role: 'user',
@@ -323,10 +333,67 @@ export class ConversationAgent {
               },
             ],
           },
-        ] : undefined, // Only include input on first iteration, conversation context handles subsequent ones
-        tools: tools.length > 0 ? tools : undefined,
-        temperature: options?.temperature ?? 0.7,
+        ];
+      } else {
+        // Subsequent iterations: API requires input parameter, provide empty string
+        requestParams.input = '';
+      }
+
+      // Log LLM input
+      const inputDetails = Array.isArray(requestParams.input) 
+        ? requestParams.input.map((item: any) => {
+            if (Array.isArray(item.content)) {
+              return {
+                role: item.role,
+                content: item.content.map((c: any) => ({
+                  type: c.type,
+                  text: c.text || c.text === '' ? c.text : undefined,
+                  textLength: c.text?.length || 0,
+                })),
+              };
+            }
+            return {
+              role: item.role,
+              content: typeof item.content === 'string' ? item.content : item.content,
+              contentLength: typeof item.content === 'string' ? item.content.length : undefined,
+            };
+          })
+        : requestParams.input === '' ? 'empty string' : requestParams.input;
+      
+      logger.info('LLM Input (ConversationAgent)', {
+        agent: 'ConversationAgent',
+        userId,
+        iteration,
+        model: requestParams.model,
+        conversationId: requestParams.conversation,
+        input: inputDetails,
+        inputLength: Array.isArray(requestParams.input) 
+          ? requestParams.input.reduce((sum: number, item: any) => {
+              if (Array.isArray(item.content)) {
+                return sum + item.content.reduce((s: number, c: any) => s + (c.text?.length || 0), 0);
+              }
+              return sum + (typeof item.content === 'string' ? item.content.length : 0);
+            }, 0)
+          : requestParams.input === '' ? 0 : (typeof requestParams.input === 'string' ? requestParams.input.length : 0),
+        hasTools: !!requestParams.tools,
+        toolCount: requestParams.tools?.length || 0,
+        toolNames: requestParams.tools?.map((t: any) => t.name || t.function?.name || 'unknown') || [],
+        reasoning: requestParams.reasoning,
+        fullRequest: {
+          model: requestParams.model,
+          conversation: requestParams.conversation,
+          input: requestParams.input,
+          tools: requestParams.tools ? requestParams.tools.map((t: any) => ({
+            name: t.name || t.function?.name,
+            description: t.description || t.function?.description?.substring(0, 100),
+          })) : undefined,
+          reasoning: requestParams.reasoning,
+        },
       });
+
+      // Create a response using the Responses API with conversation context and tools
+      // Type assertion needed because the SDK types are stricter than the actual API accepts
+      const response = await this.client.responses.create(requestParams as any);
 
       // Check if there are tool calls in the response
       const toolCalls: Array<{ call_id: string; name: string; arguments: any }> = [];

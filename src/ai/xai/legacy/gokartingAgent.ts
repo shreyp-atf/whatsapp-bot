@@ -6,9 +6,9 @@
  */
 
 import { BaseXaiAgent } from './baseAgent';
-import { GokartingExtractionSchema, type GokartingExtractionResult } from '../utils/schemas';
-import { getGokartingExtractionPrompt, getGokartingExtractionUserMessage } from '../utils/extractionPrompts';
-import { logger } from '../utils/logging';
+import { GokartingExtractionSchema, type GokartingExtractionResult } from '../../utils/schemas';
+import { getGokartingExtractionPrompt, getGokartingExtractionUserMessage } from '../../utils/extractionPrompts';
+import { logger } from '../../utils/logging';
 
 export interface GokartingAgentInput {
   url: string;

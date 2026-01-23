@@ -8,6 +8,7 @@ import { checkOpenAIStatus } from './ai';
 import { handleCreateUser, handleGetUser, handleGetUserPersona } from './handlers/userHandlers';
 import { handleGetChatMessages } from './handlers/chatHandlers';
 import { handleGetActivityVenueMap, handleSendEventDetails, handleGetActivityVenueMaps } from './handlers/activityVenueMapHandlers';
+import { logger } from './utils/logging';
 
 // Load environment variables
 dotenv.config();
@@ -22,82 +23,27 @@ app.use('/webhook', express.raw({ type: 'application/json' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-/**
- * Request logging middleware - logs all incoming queries
- */
-app.use((req: Request, res: Response, next: express.NextFunction) => {
-  const timestamp = new Date().toISOString();
-  const method = req.method;
-  const path = req.path;
-  const query = Object.keys(req.query).length > 0 ? req.query : undefined;
-  const ip = req.ip || req.socket.remoteAddress || 'unknown';
-  
-  // Mask sensitive headers
-  const headers = { ...req.headers };
-  const sensitiveHeaders = ['authorization', 'cookie', 'x-periskope-signature', 'x-api-key'];
-  sensitiveHeaders.forEach(header => {
-    if (headers[header]) {
-      headers[header] = '[REDACTED]';
-    }
-  });
-  
-  // Handle body - could be Buffer (for webhook) or object (for other routes)
-  let body = req.body;
-  if (body instanceof Buffer) {
-    // For webhook routes with raw body, try to parse and log
-    try {
-      const parsed = JSON.parse(body.toString());
-      body = parsed;
-      // Mask sensitive fields
-      if (typeof body === 'object' && body !== null) {
-        body = { ...body };
-        const sensitiveFields = ['password', 'token', 'apiKey', 'secret', 'signingKey'];
-        sensitiveFields.forEach(field => {
-          if (body[field]) {
-            body[field] = '[REDACTED]';
-          }
-        });
-      }
-    } catch {
-      // If parsing fails, just log as raw buffer info
-      body = `[Buffer: ${body.length} bytes]`;
-    }
-  } else if (body && typeof body === 'object') {
-    // For parsed JSON bodies, mask sensitive fields
-    body = { ...body };
-    const sensitiveFields = ['password', 'token', 'apiKey', 'secret', 'signingKey'];
-    sensitiveFields.forEach(field => {
-      if (body[field]) {
-        body[field] = '[REDACTED]';
-      }
-    });
-  }
-  
-  // Log the request
-  console.log('\n=== Incoming Request ===');
-  console.log('Timestamp:', timestamp);
-  console.log('Method:', method);
-  console.log('Path:', path);
-  if (query) {
-    console.log('Query Parameters:', JSON.stringify(query, null, 2));
-  }
-  if (body && Object.keys(body).length > 0) {
-    console.log('Request Body:', JSON.stringify(body, null, 2));
-  }
-  console.log('IP Address:', ip);
-  console.log('User-Agent:', req.headers['user-agent'] || 'unknown');
-  console.log('========================\n');
-  
-  next();
-});
 
 /**
  * Webhook endpoint to receive all Periskope events
  */
 app.post('/webhook', async (req: Request, res: Response) => {
+  logger.info('Route: POST /webhook - Entry', {
+    route: '/webhook',
+    method: 'POST',
+    hasSignature: !!req.headers['x-periskope-signature'],
+    bodyLength: req.body?.length || 0,
+  });
+  
   try {
     const signature = req.headers['x-periskope-signature'] as string | undefined;
     const rawBody = req.body as Buffer;
+    
+    logger.info('Route: POST /webhook - Verifying signature', {
+      route: '/webhook',
+      hasSignature: !!signature,
+      bodyLength: rawBody?.length || 0,
+    });
     
     // Verify signature
     const isValid = verifySignature(
@@ -106,29 +52,42 @@ app.post('/webhook', async (req: Request, res: Response) => {
       process.env.PERISKOPE_SIGNING_KEY
     );
     
+    logger.info('Route: POST /webhook - Signature verification result', {
+      route: '/webhook',
+      isValid,
+    });
+    
     if (!isValid) {
-      console.error('✗ Invalid webhook signature - rejecting request');
+      logger.error('Route: POST /webhook - Invalid signature', new Error('Invalid webhook signature'), {
+        route: '/webhook',
+        hasSignature: !!signature,
+      });
       return res.status(401).json({ error: 'Invalid signature' });
     }
 
     // Parse the body as JSON after verification
     const event: WebhookEvent = JSON.parse(rawBody.toString());
     
-    // Print the entire event to console
-    console.log('\n=== Webhook Event Received ===');
-    console.log('Timestamp:', new Date().toISOString());
-    console.log('Event Type:', event.event_type || event.type || event.integration_name || 'unknown');
-    console.log('Full Event Data:');
-    console.log(JSON.stringify(event, null, 2));
-    console.log('================================\n');
+    logger.info('Route: POST /webhook - Event parsed, routing', {
+      route: '/webhook',
+      eventType: event.type || 'unknown',
+      hasData: !!event.data,
+    });
     
     // Route webhook event to appropriate handler
     await routeWebhookEvent(event);
     
+    logger.info('Route: POST /webhook - Event routed successfully', {
+      route: '/webhook',
+      eventType: event.type || 'unknown',
+    });
+    
     // Always return 200 to acknowledge receipt
     res.status(200).json({ status: 'received' });
   } catch (error) {
-    console.error('Error processing webhook:', error);
+    logger.error('Route: POST /webhook - Error processing webhook', error instanceof Error ? error : new Error(String(error)), {
+      route: '/webhook',
+    });
     res.status(500).json({ 
       status: 'error',
       message: error instanceof Error ? error.message : 'An unexpected error occurred'
@@ -140,7 +99,12 @@ app.post('/webhook', async (req: Request, res: Response) => {
  * Health check endpoint
  */
 app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ 
+  logger.info('Route: GET /health - Entry', {
+    route: '/health',
+    method: 'GET',
+  });
+  
+  const response = { 
     status: 'ok', 
     timestamp: new Date().toISOString(),
     database: process.env.DATABASE_URL ? 'configured' : 'not configured',
@@ -148,7 +112,14 @@ app.get('/health', (req: Request, res: Response) => {
       webhook: 'active',
       api: 'active'
     }
+  };
+  
+  logger.info('Route: GET /health - Exit', {
+    route: '/health',
+    response,
   });
+  
+  res.status(200).json(response);
 });
 
 /**
@@ -160,47 +131,97 @@ app.get('/health', (req: Request, res: Response) => {
  * POST /api/users
  * Body: { mobileNumber: number, persona: object }
  */
-app.post('/api/users', handleCreateUser);
+app.post('/api/users', (req: Request, res: Response) => {
+  logger.info('Route: POST /api/users - Entry', {
+    route: '/api/users',
+    method: 'POST',
+    body: JSON.stringify(req.body).substring(0, 500),
+  });
+  handleCreateUser(req, res);
+});
 
 /**
  * Get user by mobile number
  * POST /api/users/get
  * Body: { mobile_number: string }
  */
-app.post('/api/users/get', handleGetUser);
+app.post('/api/users/get', (req: Request, res: Response) => {
+  logger.info('Route: POST /api/users/get - Entry', {
+    route: '/api/users/get',
+    method: 'POST',
+    body: JSON.stringify(req.body).substring(0, 500),
+  });
+  handleGetUser(req, res);
+});
 
 /**
  * Get user persona by user ID
  * GET /api/users/:userId/persona
  */
-app.get('/api/users/:userId/persona', handleGetUserPersona);
+app.get('/api/users/:userId/persona', (req: Request, res: Response) => {
+  logger.info('Route: GET /api/users/:userId/persona - Entry', {
+    route: '/api/users/:userId/persona',
+    method: 'GET',
+    userId: req.params.userId,
+  });
+  handleGetUserPersona(req, res);
+});
 
 /**
  * Get chat history by chat ID
  * GET /api/chats/:chatId/messages
  * Query params: offset (optional, default: 0), limit (optional, default: 2000)
  */
-app.get('/api/chats/:chatId/messages', handleGetChatMessages);
+app.get('/api/chats/:chatId/messages', (req: Request, res: Response) => {
+  logger.info('Route: GET /api/chats/:chatId/messages - Entry', {
+    route: '/api/chats/:chatId/messages',
+    method: 'GET',
+    chatId: req.params.chatId,
+    query: req.query,
+  });
+  handleGetChatMessages(req, res);
+});
 
 /**
  * Get activity venue map by ID
  * GET /api/activity-venue-maps/:id
  */
-app.get('/api/activity-venue-maps/:id', handleGetActivityVenueMap);
+app.get('/api/activity-venue-maps/:id', (req: Request, res: Response) => {
+  logger.info('Route: GET /api/activity-venue-maps/:id - Entry', {
+    route: '/api/activity-venue-maps/:id',
+    method: 'GET',
+    id: req.params.id,
+  });
+  handleGetActivityVenueMap(req, res);
+});
 
 /**
  * Send event details as WhatsApp message to user
  * POST /api/send-event-details
  * Body: { activityVenueMapId: number, userId: number }
  */
-app.post('/api/send-event-details', handleSendEventDetails);
+app.post('/api/send-event-details', (req: Request, res: Response) => {
+  logger.info('Route: POST /api/send-event-details - Entry', {
+    route: '/api/send-event-details',
+    method: 'POST',
+    body: JSON.stringify(req.body).substring(0, 500),
+  });
+  handleSendEventDetails(req, res);
+});
 
 /**
  * Fetch activity venue maps by city and datetime
  * POST /api/activity-venue-maps
  * Body: { userId: number, datetime: string (ISO 8601) }
  */
-app.post('/api/activity-venue-maps', handleGetActivityVenueMaps);
+app.post('/api/activity-venue-maps', (req: Request, res: Response) => {
+  logger.info('Route: POST /api/activity-venue-maps - Entry', {
+    route: '/api/activity-venue-maps',
+    method: 'POST',
+    body: JSON.stringify(req.body).substring(0, 500),
+  });
+  handleGetActivityVenueMaps(req, res);
+});
 
 /**
  * Initialize database connection and start server

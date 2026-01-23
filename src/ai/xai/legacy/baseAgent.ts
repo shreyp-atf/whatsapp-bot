@@ -15,9 +15,9 @@ import {
   AgentResult,
   createSuccessResult,
   createErrorResult
-} from '../utils/agentInterface';
-import { AgentError, AgentErrorType, classifyError } from '../utils/errorHandling';
-import { logger } from '../utils/logging';
+} from '../../utils/agentInterface';
+import { AgentError, AgentErrorType, classifyError } from '../../utils/errorHandling';
+import { logger } from '../../utils/logging';
 
 /**
  * Base xAI agent implementation
